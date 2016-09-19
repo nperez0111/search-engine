@@ -18,6 +18,7 @@ public class Driver {
 				f.parseInput( file );
 			}
 			System.out.println( f.toString() );
+			System.out.println( f.showSomething() );
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );

@@ -1,9 +1,6 @@
-import java.io.BufferedWriter;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -15,7 +12,7 @@ import java.util.TreeSet;
  * 
  * @see <a href="http://json.org/">http://json.org/</a>
  */
-public class SimpleJSONWriter {
+public class JSONBuilder {
 
 	/** Tab character used for pretty JSON output. */
 	public static final char TAB = '\t';
@@ -30,6 +27,7 @@ public class SimpleJSONWriter {
 	 * @return "text" in quotes
 	 */
 	public static String quote( String text ) {
+
 		return String.format( "\"%s\"", text );
 	}
 
@@ -41,6 +39,7 @@ public class SimpleJSONWriter {
 	 * @return n tab characters concatenated
 	 */
 	public static String tab( int n ) {
+
 		char[] tabs = new char[n];
 		Arrays.fill( tabs, TAB );
 		return String.valueOf( tabs );
@@ -57,7 +56,7 @@ public class SimpleJSONWriter {
 	 *            set of integer elements
 	 * @return true if everything was successful, false otherwise
 	 */
-	public static boolean writeArray( Path path, TreeSet<Integer> elements, int amountToTab ) {
+	public static StringBuilder makeArray( Set<Integer> elements, int amountToTab ) {
 
 		/*
 		 * TODO: Modify this method as necessary. You may NOT throw any
@@ -65,24 +64,22 @@ public class SimpleJSONWriter {
 		 * exceptions. Also, when dealing with int-like values, make sure you
 		 * use toString() before you write! For example:
 		 * 
-		 * writer.write(elements.first().toString())
+		 * str.append(elements.first().toString())
 		 */
-		try ( BufferedWriter writer = Files.newBufferedWriter( path, Charset.defaultCharset() ); ) {
-			writer.write( "[" + END );
-			for ( Integer i : elements ) {
-				writer.write( tab( amountToTab ) + i.toString() + ( elements.last() == i ? "" : "," ) + END );
-			}
-			writer.write( tab( amountToTab - 1 ) + "]" + END );
-			writer.flush();
-			return true;
+		StringBuilder str = new StringBuilder();
+		str.append( "[" + END );
+		int c = elements.size();
+		for ( Integer i : elements ) {
+			str.append( tab( amountToTab ) + i.toString() + ( c == 0 ? "" : "," ) + END );
+			c--;
 		}
-		catch ( Exception e ) {
-			return false;
-		}
+		str.append( tab( amountToTab - 1 ) + "]" + END );
+		return str;
 	}
 
-	public static boolean writeArray( Path p, TreeSet<Integer> el ) {
-		return writeArray( p, el, 1 );
+	public static StringBuilder makeArray( Set<Integer> el ) {
+
+		return makeArray( el, 1 );
 	}
 
 	/**
@@ -97,7 +94,7 @@ public class SimpleJSONWriter {
 	 *            map of elements
 	 * @return true if everything was successful, false otherwise
 	 */
-	public static boolean writeObject( Path path, TreeMap<String, Integer> elements, int amountToTab ) {
+	public static StringBuilder makeObject( Map<String, Integer> elements, int amountToTab ) {
 
 		/*
 		 * TODO: Modify this method as necessary. You may NOT throw any
@@ -105,25 +102,20 @@ public class SimpleJSONWriter {
 		 * exceptions. Also, when dealing with int-like values, make sure you
 		 * use toString() before you write!
 		 */
-		try ( BufferedWriter writer = Files.newBufferedWriter( path, Charset.defaultCharset() ); ) {
-			writer.write( "{" + END );
-			int c = elements.keySet().size();
-			for ( String key : elements.keySet() ) {
-				writer.write(
-						tab( amountToTab ) + quote( key ) + ": " + elements.get( key ) + ( c > 1 ? "," : "" ) + END );
-				c--;
-			}
-			writer.write( tab( amountToTab - 1 ) + "}" + END );
-			writer.flush();
-			return true;
+		StringBuilder str = new StringBuilder();
+		str.append( "{" + END );
+		int c = elements.keySet().size();
+		for ( String key : elements.keySet() ) {
+			str.append( tab( amountToTab ) + quote( key ) + ": " + elements.get( key ) + ( c > 1 ? "," : "" ) + END );
+			c--;
 		}
-		catch ( Exception e ) {
-			return false;
-		}
+		str.append( tab( amountToTab - 1 ) + "}" + END );
+		return str;
 	}
 
-	public static boolean writeObject( Path p, TreeMap<String, Integer> el ) {
-		return writeObject( p, el, 1 );
+	public static StringBuilder makeObject( Map<String, Integer> el ) {
+
+		return makeObject( el, 1 );
 	}
 
 	/**
@@ -139,37 +131,49 @@ public class SimpleJSONWriter {
 	 *            nested map of elements
 	 * @return true if everything was successful, false otherwise
 	 */
-	public static boolean writeNestedObject( Path path, TreeMap<String, TreeSet<Integer>> elements, int amountToTab ) {
+	public static StringBuilder makeObjectWithArray( Map<String, Set<Integer>> elements, int amountToTab ) {
 
 		/*
 		 * TODO: Modify this method as necessary. You may NOT throw any
 		 * exceptions, and you must return false if you encounter any
 		 * exceptions.
 		 */
-		try ( BufferedWriter writer = Files.newBufferedWriter( path, Charset.defaultCharset() ); ) {
-			writer.write( "{" + END );
-			int c = elements.keySet().size();
-			for ( String s : elements.keySet() ) {
-				writer.write( tab( amountToTab ) + quote( s ) + ": " );
-				writer.write( "[" + END );
-				for ( Integer i : elements.get( s ) ) {
-					writer.write( tab( amountToTab + 1 ) + i.toString() + ( elements.get( s ).last() == i ? "" : "," )
-							+ END );
-				}
-				writer.write( tab( amountToTab ) + "]" + ( c > 1 ? "," : "" ) + END );
-				c--;
-			}
-			writer.write( "}" + END );
-			writer.flush();
-			return true;
+		StringBuilder str = new StringBuilder();
+		str.append( "{" + END );
+		int c = elements.keySet().size();
+		for ( String s : elements.keySet() ) {
+			str.append( tab( amountToTab ) + quote( s ) + ": " );
+			str.append( JSONBuilder.makeArray( elements.get( s ), amountToTab + 1 ).toString() );
+			str.append( c > 1 ? "," : "" );
+			c--;
 		}
-		catch ( Exception e ) {
-			return false;
-		}
+		str.append( tab( amountToTab - 1 ) + "}" );
+		return str;
 	}
 
-	public static boolean writeNestedObject( Path path, TreeMap<String, TreeSet<Integer>> elements ) {
-		return writeNestedObject( path, elements, 1 );
+	public static StringBuilder makeObjectWithArray( Map<String, Set<Integer>> elements ) {
+
+		return makeObjectWithArray( elements, 1 );
+	}
+
+	public static StringBuilder makeInvertedIndexJSON( Map<String, Map<String, Set<Integer>>> elements,
+			int amountToTab ) {
+
+		StringBuilder str = new StringBuilder();
+		str.append( "{" + END );
+		int c = elements.keySet().size();
+		for ( String key : elements.keySet() ) {
+			str.append( tab( amountToTab ) + quote( key ) + ": "
+					+ makeObjectWithArray( elements.get( key ), amountToTab + 1 ) + ( c > 1 ? "," : "" ) + END );
+			c--;
+		}
+		str.append( tab( amountToTab - 1 ) + "}" + END );
+		return str;
+	}
+
+	public static StringBuilder makeInvertedIndexJSON( Map<String, Map<String, Set<Integer>>> elements ) {
+
+		return makeInvertedIndexJSON( elements, 1 );
 	}
 
 	/*
@@ -184,11 +188,4 @@ public class SimpleJSONWriter {
 	 * test for grading. This does not mean you have to use these data
 	 * structures in your projects.
 	 */
-
-	public static void main( String[] args ) {
-		PrintWriter writer = new PrintWriter( System.out );
-		Integer i = 65;
-		writer.write( i.toString() );
-		writer.flush();
-	}
 }

@@ -107,6 +107,11 @@ public class InvertedIndex {
 		return new ArrayList<String>( index.keySet() );
 	}
 
+	public Map<String, Map<String, Set<Integer>>> getData() {
+
+		return Collections.unmodifiableMap( index );
+	}
+
 	/**
 	 * Returns a copy of the positions for a specific word.
 	 * 
@@ -131,6 +136,7 @@ public class InvertedIndex {
 	 */
 	@Override
 	public String toString() {
+
 		return index.toString();
 	}
 

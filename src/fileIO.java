@@ -10,9 +10,16 @@ import java.util.List;
 public class fileIO {
 
 	InvertedIndex index;
+	JSONBuilder build;
 
 	public fileIO() {
 		index = new InvertedIndex();
+		build = new JSONBuilder();
+	}
+
+	public String showSomething() {
+
+		return JSONBuilder.makeInvertedIndexJSON( index.getData() ).toString();
 	}
 
 	private String cleanUpLine( String s ) {
