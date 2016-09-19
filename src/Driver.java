@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class Driver {
 	private final static String DIR = "-dir";
@@ -9,7 +10,12 @@ public class Driver {
 		Path dir = getPath( args );
 		System.out.println( dir.toString() );
 		try {
-			System.out.print( Traverser.validFiles( dir ) );
+			List<Path> files = Traverser.validFiles( dir );
+			fileIO f = new fileIO();
+			for ( Path file : files ) {
+				f.parseInput( file );
+			}
+			System.out.println( f.toString() );
 		}
 		catch ( IOException e ) {
 			// TODO Auto-generated catch block
@@ -29,6 +35,6 @@ public class Driver {
 			System.out.println( "The directory you specified does not exist..." );
 			return null;
 		}
-		return dir.toAbsolutePath().normalize();
+		return dir.normalize();
 	}
 }
