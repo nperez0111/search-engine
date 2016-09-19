@@ -74,7 +74,6 @@ public class SimpleJSONWriter {
 			}
 			writer.write( tab( amountToTab - 1 ) + "]" + END );
 			writer.flush();
-			;
 			return true;
 		}
 		catch ( Exception e ) {

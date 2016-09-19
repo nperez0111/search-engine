@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -6,15 +5,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Traverser {
-	private Path path;
-
-	public Traverser() {
-
-	}
-
-	public Traverser( Path p ) {
-		path = p;
-	}
 
 	private static boolean isOfCorrectType( Path path ) {
 		return path.getFileName().toString().toLowerCase().endsWith( ".txt" );
@@ -53,7 +43,4 @@ public class Traverser {
 		return validFiles( path, new ArrayList<Path>() );
 	}
 
-	public boolean perform( File f ) {
-		return false;
-	}
 }
