@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -112,9 +113,11 @@ public class InvertedIndex {
 	public List<Integer> getPositions( String word ) {
 
 		List<Integer> ret = new ArrayList<>();
-
+		for ( Entry<String, Set<Integer>> l : index.get( word ).entrySet() ) {
+			ret.addAll( l.getValue() );
+		}
 		Collections.sort( ret );
-		// FIXME
+
 		return ret;
 
 	}
