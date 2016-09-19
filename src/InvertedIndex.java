@@ -24,6 +24,10 @@ public class InvertedIndex {
 
 	}
 
+	public InvertedIndex( Map<String, Map<String, Set<Integer>>> fresh ) {
+		index = fresh;
+	}
+
 	/**
 	 * Adds the word and the position it was found to the index.
 	 *

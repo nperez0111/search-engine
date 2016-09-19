@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class fileIO {
+
 	InvertedIndex index;
 
 	public fileIO() {
@@ -15,22 +16,25 @@ public class fileIO {
 	}
 
 	private String cleanUpLine( String s ) {
-		return s;
+
+		return s.replaceAll( "[^0-9a-zA-Z ]", "" );
 	}
 
 	private List<String> getWordsInLine( String line ) {
+
 		return new ArrayList<String>( Arrays.asList( line.split( " " ) ) );
 	}
 
 	private void addWordsToIndex( List<String> words, String fileName, int offsetPosition ) {
+
 		int c = 0;
 		for ( String word : words ) {
-			index.add( word, fileName, offsetPosition + c );
-			c++;
+			index.add( word, fileName, offsetPosition + c++ );
 		}
 	}
 
 	public void parseInput( Path input ) throws IOException {
+
 		try ( BufferedReader reader = Files.newBufferedReader( input, Charset.defaultCharset() ); ) {
 			String line = null;
 			int count = 0;
@@ -44,11 +48,19 @@ public class fileIO {
 		}
 	}
 
+	public void writeOutput( Path output ) throws IOException {
+
+		try ( BufferedReader writer = Files.newBufferedReader( output, Charset.defaultCharset() ); ) {
+
+		}
+	}
+
 	/**
 	 * Returns a string representation of this index.
 	 */
 	@Override
 	public String toString() {
+
 		return index.toString();
 	}
 }

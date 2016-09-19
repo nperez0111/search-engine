@@ -4,9 +4,11 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Driver {
+
 	private final static String DIR = "-dir";
 
 	public static void main( String[] args ) {
+
 		Path dir = getPath( args );
 		System.out.println( dir.toString() );
 		try {
@@ -18,12 +20,13 @@ public class Driver {
 			System.out.println( f.toString() );
 		}
 		catch ( IOException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println( "File may be in use or not exist.." );
+			return;
 		}
 	}
 
 	private static Path getPath( String[] args ) {
+
 		ArgumentParser parser = new ArgumentParser( args );
 		if ( !parser.hasFlag( DIR ) ) {
 			System.out.println( "Sorry you must specify a directory..." );
