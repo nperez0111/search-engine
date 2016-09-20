@@ -6,10 +6,15 @@ import java.util.List;
 public class Driver {
 
 	private final static String DIR = "-dir";
+	private final static String INDEX = "-index";
+	private static ArgumentParser parser;
 
 	public static void main( String[] args ) {
 
-		Path dir = getPath( args );
+		Path dir = getDir( args );
+		if ( dir == null ) {
+			return;
+		}
 		System.out.println( dir.toString() );
 		try {
 			List<Path> files = Traverser.validFiles( dir );
@@ -17,8 +22,11 @@ public class Driver {
 			for ( Path file : files ) {
 				f.parseInput( file );
 			}
-			System.out.println( f.toString() );
-			System.out.println( f.showSomething() );
+			Path outputFile = getOutput();
+			if ( outputFile == null ) {
+				return;
+			}
+			f.writeOutput( outputFile );
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );
@@ -26,10 +34,10 @@ public class Driver {
 		}
 	}
 
-	private static Path getPath( String[] args ) {
+	private static Path getDir( String[] args ) {
 
-		ArgumentParser parser = new ArgumentParser( args );
-		if ( !parser.hasFlag( DIR ) ) {
+		parser = new ArgumentParser( args );
+		if ( !parser.hasFlag( DIR ) || !parser.hasValue( DIR ) ) {
 			System.out.println( "Sorry you must specify a directory..." );
 			return null;
 		}
@@ -40,5 +48,10 @@ public class Driver {
 			return null;
 		}
 		return dir.normalize();
+	}
+
+	private static Path getOutput() {
+
+		return Paths.get( parser.getValue( INDEX, "index.json" ) );
 	}
 }

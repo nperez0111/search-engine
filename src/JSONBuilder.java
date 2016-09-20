@@ -15,10 +15,10 @@ import java.util.TreeSet;
 public class JSONBuilder {
 
 	/** Tab character used for pretty JSON output. */
-	public static final char TAB = '\t';
+	private static final char TAB = '\t';
 
 	/** End of line character used for pretty JSON output. */
-	public static final char END = '\n';
+	private static final char END = '\n';
 
 	/**
 	 * Returns a quoted version of the provided text.
@@ -26,7 +26,7 @@ public class JSONBuilder {
 	 * @param text
 	 * @return "text" in quotes
 	 */
-	public static String quote( String text ) {
+	private static String quote( String text ) {
 
 		return String.format( "\"%s\"", text );
 	}
@@ -38,7 +38,7 @@ public class JSONBuilder {
 	 *            number of tab characters
 	 * @return n tab characters concatenated
 	 */
-	public static String tab( int n ) {
+	private static String tab( int n ) {
 
 		char[] tabs = new char[n];
 		Arrays.fill( tabs, TAB );
@@ -56,7 +56,7 @@ public class JSONBuilder {
 	 *            set of integer elements
 	 * @return true if everything was successful, false otherwise
 	 */
-	public static StringBuilder makeArray( Set<Integer> elements, int amountToTab ) {
+	private static StringBuilder makeArray( Set<Integer> elements, int amountToTab ) {
 
 		/*
 		 * TODO: Modify this method as necessary. You may NOT throw any
@@ -70,10 +70,10 @@ public class JSONBuilder {
 		str.append( "[" + END );
 		int c = elements.size();
 		for ( Integer i : elements ) {
-			str.append( tab( amountToTab ) + i.toString() + ( c == 0 ? "" : "," ) + END );
-			c--;
+			str.append( tab( amountToTab ) + i.toString() + ( --c == 0 ? "" : "," ) + END );
+
 		}
-		str.append( tab( amountToTab - 1 ) + "]" + END );
+		str.append( tab( amountToTab - 1 ) + "]" );
 		return str;
 	}
 
@@ -94,14 +94,8 @@ public class JSONBuilder {
 	 *            map of elements
 	 * @return true if everything was successful, false otherwise
 	 */
-	public static StringBuilder makeObject( Map<String, Integer> elements, int amountToTab ) {
+	private static StringBuilder makeObject( Map<String, Integer> elements, int amountToTab ) {
 
-		/*
-		 * TODO: Modify this method as necessary. You may NOT throw any
-		 * exceptions, and you must return false if you encounter any
-		 * exceptions. Also, when dealing with int-like values, make sure you
-		 * use toString() before you write!
-		 */
 		StringBuilder str = new StringBuilder();
 		str.append( "{" + END );
 		int c = elements.keySet().size();
@@ -131,7 +125,7 @@ public class JSONBuilder {
 	 *            nested map of elements
 	 * @return true if everything was successful, false otherwise
 	 */
-	public static StringBuilder makeObjectWithArray( Map<String, Set<Integer>> elements, int amountToTab ) {
+	private static StringBuilder makeObjectWithArray( Map<String, Set<Integer>> elements, int amountToTab ) {
 
 		/*
 		 * TODO: Modify this method as necessary. You may NOT throw any
@@ -145,6 +139,7 @@ public class JSONBuilder {
 			str.append( tab( amountToTab ) + quote( s ) + ": " );
 			str.append( JSONBuilder.makeArray( elements.get( s ), amountToTab + 1 ).toString() );
 			str.append( c > 1 ? "," : "" );
+			str.append( END );
 			c--;
 		}
 		str.append( tab( amountToTab - 1 ) + "}" );
@@ -175,17 +170,4 @@ public class JSONBuilder {
 
 		return makeInvertedIndexJSON( elements, 1 );
 	}
-
-	/*
-	 * NOTE: You may add methods to this class! There are clever ways to reuse
-	 * code if you create helper methods and creative ways to generalize this
-	 * code with Generics, but the goal here is to practice file IO and
-	 * exception handling so do not get too caught up in design yet.
-	 */
-
-	/*
-	 * NOTE: This class uses TreeMap and TreeSet only because they are easier to
-	 * test for grading. This does not mean you have to use these data
-	 * structures in your projects.
-	 */
 }
