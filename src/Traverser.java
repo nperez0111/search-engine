@@ -3,14 +3,16 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Traverser {
 
 	private static boolean isOfCorrectType( Path path ) {
+
 		return path.getFileName().toString().toLowerCase().endsWith( ".txt" );
 	}
 
-	private static ArrayList<Path> validFiles( Path path, ArrayList<Path> accumulator ) throws IOException {
+	private static List<Path> validFiles( Path path, List<Path> accumulator ) throws IOException {
 
 		try ( DirectoryStream<Path> listing = Files.newDirectoryStream( path ) ) {
 
@@ -39,8 +41,10 @@ public class Traverser {
 		return accumulator;
 	}
 
-	public static ArrayList<Path> validFiles( Path path ) throws IOException {
-		return validFiles( path, new ArrayList<Path>() );
+	public static List<Path> validFiles( Path path ) throws IOException {
+
+		List<Path> emptyAccumulator = new ArrayList<>();
+		return validFiles( path, emptyAccumulator );
 	}
 
 }

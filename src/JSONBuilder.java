@@ -1,8 +1,6 @@
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Outputs certain Java objects to a file in a "pretty" JSON format using the
@@ -45,31 +43,14 @@ public class JSONBuilder {
 		return String.valueOf( tabs );
 	}
 
-	/**
-	 * Writes a {@link TreeSet} of {@link Integer} objects as a "pretty" JSON
-	 * array to file using UTF8. Always includes a blank line at the end of the
-	 * file. Outputs a warning to the console if an exception is encountered.
-	 * 
-	 * @param path
-	 *            path to write file
-	 * @param elements
-	 *            set of integer elements
-	 * @return true if everything was successful, false otherwise
-	 */
 	private static StringBuilder makeArray( Set<Integer> elements, int amountToTab ) {
 
-		/*
-		 * TODO: Modify this method as necessary. You may NOT throw any
-		 * exceptions, and you must return false if you encounter any
-		 * exceptions. Also, when dealing with int-like values, make sure you
-		 * use toString() before you write! For example:
-		 * 
-		 * str.append(elements.first().toString())
-		 */
 		StringBuilder str = new StringBuilder();
 		str.append( "[" + END );
 		int c = elements.size();
+
 		for ( Integer i : elements ) {
+
 			str.append( tab( amountToTab ) + i.toString() + ( --c == 0 ? "" : "," ) + END );
 
 		}
@@ -82,28 +63,21 @@ public class JSONBuilder {
 		return makeArray( el, 1 );
 	}
 
-	/**
-	 * Writes a {@link TreeMap} with {@link String} keys and {@link Integer}
-	 * values as a "pretty" JSON object to file using UTF8. Always includes a
-	 * blank line at the end of the file. Outputs a warning to the console if an
-	 * exception is encountered.
-	 * 
-	 * @param path
-	 *            path to write file
-	 * @param elements
-	 *            map of elements
-	 * @return true if everything was successful, false otherwise
-	 */
 	private static StringBuilder makeObject( Map<String, Integer> elements, int amountToTab ) {
 
 		StringBuilder str = new StringBuilder();
 		str.append( "{" + END );
 		int c = elements.keySet().size();
+
 		for ( String key : elements.keySet() ) {
+
 			str.append( tab( amountToTab ) + quote( key ) + ": " + elements.get( key ) + ( c > 1 ? "," : "" ) + END );
 			c--;
+
 		}
+
 		str.append( tab( amountToTab - 1 ) + "}" + END );
+
 		return str;
 	}
 
@@ -112,37 +86,24 @@ public class JSONBuilder {
 		return makeObject( el, 1 );
 	}
 
-	/**
-	 * Writes a nested {@link TreeMap} with {@link String} keys and values that
-	 * are nested {@link TreeSet} collections of {@link Integer} objects as a
-	 * "pretty" nested JSON object to file using UTF8. Always includes a blank
-	 * line at the end of the file. Outputs a warning to the console if an
-	 * exception is encountered.
-	 * 
-	 * @param path
-	 *            path to write file
-	 * @param elements
-	 *            nested map of elements
-	 * @return true if everything was successful, false otherwise
-	 */
 	private static StringBuilder makeObjectWithArray( Map<String, Set<Integer>> elements, int amountToTab ) {
 
-		/*
-		 * TODO: Modify this method as necessary. You may NOT throw any
-		 * exceptions, and you must return false if you encounter any
-		 * exceptions.
-		 */
 		StringBuilder str = new StringBuilder();
 		str.append( "{" + END );
 		int c = elements.keySet().size();
+
 		for ( String s : elements.keySet() ) {
+
 			str.append( tab( amountToTab ) + quote( s ) + ": " );
 			str.append( JSONBuilder.makeArray( elements.get( s ), amountToTab + 1 ) );
 			str.append( c > 1 ? "," : "" );
 			str.append( END );
 			c--;
+
 		}
+
 		str.append( tab( amountToTab - 1 ) + "}" );
+
 		return str;
 	}
 
@@ -157,13 +118,18 @@ public class JSONBuilder {
 		StringBuilder str = new StringBuilder();
 		str.append( "{" + END );
 		int c = elements.keySet().size();
+
 		for ( String key : elements.keySet() ) {
+
 			str.append( tab( amountToTab ) + quote( key ) + ": " );
 			str.append( makeObjectWithArray( elements.get( key ), amountToTab + 1 ) );
 			str.append( ( c > 1 ? "," : "" ) + END );
 			c--;
+
 		}
+
 		str.append( tab( amountToTab - 1 ) + "}" + END );
+
 		return str;
 	}
 

@@ -28,7 +28,7 @@ public class FileIO {
 
 	private List<String> getWordsInLine( String line ) {
 
-		List<String> list = new ArrayList<String>( Arrays.asList( line.split( " " ) ) );
+		List<String> list = new ArrayList<>( Arrays.asList( line.split( " " ) ) );
 		List<String> words = new ArrayList<>();
 		for ( String word : list ) {
 			words.add( word.trim() );
@@ -47,6 +47,7 @@ public class FileIO {
 		return c;
 	}
 
+	// Take in input of files and put them into the index
 	public void parseInput( Path input ) throws IOException {
 
 		try ( BufferedReader reader = Files.newBufferedReader( input, Charset.defaultCharset() ); ) {
@@ -62,6 +63,7 @@ public class FileIO {
 		}
 	}
 
+	// Write output to file
 	public void writeOutput( Path output ) throws IOException {
 
 		StringBuilder JSON = getJSON();
