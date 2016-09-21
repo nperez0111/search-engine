@@ -137,7 +137,7 @@ public class JSONBuilder {
 		int c = elements.keySet().size();
 		for ( String s : elements.keySet() ) {
 			str.append( tab( amountToTab ) + quote( s ) + ": " );
-			str.append( JSONBuilder.makeArray( elements.get( s ), amountToTab + 1 ).toString() );
+			str.append( JSONBuilder.makeArray( elements.get( s ), amountToTab + 1 ) );
 			str.append( c > 1 ? "," : "" );
 			str.append( END );
 			c--;
@@ -158,8 +158,9 @@ public class JSONBuilder {
 		str.append( "{" + END );
 		int c = elements.keySet().size();
 		for ( String key : elements.keySet() ) {
-			str.append( tab( amountToTab ) + quote( key ) + ": "
-					+ makeObjectWithArray( elements.get( key ), amountToTab + 1 ) + ( c > 1 ? "," : "" ) + END );
+			str.append( tab( amountToTab ) + quote( key ) + ": " );
+			str.append( makeObjectWithArray( elements.get( key ), amountToTab + 1 ) );
+			str.append( ( c > 1 ? "," : "" ) + END );
 			c--;
 		}
 		str.append( tab( amountToTab - 1 ) + "}" + END );

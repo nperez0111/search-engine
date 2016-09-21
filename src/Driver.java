@@ -18,7 +18,7 @@ public class Driver {
 		System.out.println( dir.toString() );
 		try {
 			List<Path> files = Traverser.validFiles( dir );
-			fileIO f = new fileIO();
+			FileIO f = new FileIO();
 			for ( Path file : files ) {
 				f.parseInput( file );
 			}

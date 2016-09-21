@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class fileIO {
+public class FileIO {
 
 	InvertedIndex index;
 	JSONBuilder build;
 
-	public fileIO() {
+	public FileIO() {
 		index = new InvertedIndex();
 		build = new JSONBuilder();
 	}
