@@ -11,11 +11,9 @@ import java.util.List;
 public class FileIO {
 
 	InvertedIndex index;
-	JSONBuilder build;
 
 	public FileIO() {
 		index = new InvertedIndex();
-		build = new JSONBuilder();
 	}
 
 	private StringBuilder getJSON() {
