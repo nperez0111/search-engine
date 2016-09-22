@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+// TODO Add Javadoc, name DirectoryTraverser
+
 public class Traverser {
 
 	private static boolean isOfCorrectType( Path path ) {
