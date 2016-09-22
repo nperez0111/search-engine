@@ -16,7 +16,7 @@ public class ArgumentParser {
 	 * Creates a new and empty argument parser.
 	 */
 	public ArgumentParser() {
-		argumentMap = new HashMap<>(); // TODO: Update this!
+		argumentMap = new HashMap<>();
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class ArgumentParser {
 	 * @see #isValue(String)
 	 */
 	public void parseArguments( String[] args ) {
-		// TODO: Fill this in.
+
 		for ( int i = 0; i < args.length; i++ ) {
 
 			if ( isFlag( args[i] ) ) {
@@ -99,6 +99,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the argument is a valid value
 	 */
 	public static boolean isValue( String arg ) {
+
 		return arg == null ? false
 				: arg.trim().equals( "" ) ? false : isFlag( arg ) || arg.trim().startsWith( "-" ) ? false : true;
 	}
@@ -109,6 +110,7 @@ public class ArgumentParser {
 	 * @return number of flags
 	 */
 	public int numFlags() {
+
 		return argumentMap.size(); // TODO: Update this.
 	}
 
@@ -120,6 +122,7 @@ public class ArgumentParser {
 	 * @return {@code true} if flag exists
 	 */
 	public boolean hasFlag( String flag ) {
+
 		return argumentMap.containsKey( flag ); // TODO: Update this.
 	}
 
@@ -131,6 +134,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag exists and has a non-null value
 	 */
 	public boolean hasValue( String flag ) {
+
 		return hasFlag( flag ) ? argumentMap.get( flag ) != null : false;
 	}
 
@@ -144,6 +148,7 @@ public class ArgumentParser {
 	 *         not exist
 	 */
 	public String getValue( String flag ) {
+
 		return argumentMap.get( flag );
 	}
 
@@ -159,6 +164,7 @@ public class ArgumentParser {
 	 *         the value is {@code null}
 	 */
 	public String getValue( String flag, String defaultValue ) {
+
 		return !hasFlag( flag ) || !hasValue( flag ) ? defaultValue : getValue( flag );
 	}
 
@@ -175,6 +181,7 @@ public class ArgumentParser {
 	 *         cannot be returned as an integer
 	 */
 	public int getValue( String flag, int defaultValue ) {
+
 		try {
 			int i = !hasFlag( flag ) || !hasValue( flag ) ? defaultValue : Integer.parseInt( getValue( flag ) );
 			return i;
@@ -186,6 +193,7 @@ public class ArgumentParser {
 
 	@Override
 	public String toString() {
+
 		// You do not need to modify this method.
 		return argumentMap.toString();
 	}

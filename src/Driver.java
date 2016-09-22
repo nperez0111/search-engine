@@ -1,32 +1,23 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class Driver {
 
 	private final static String DIR = "-dir";
 	private final static String INDEX = "-index";
-	private static ArgumentParser parser;
 
 	public static void main( String[] args ) {
 
-		Path dir = getDir( args );
+		ArgumentParser parser = new ArgumentParser( args );
+		Path dir = getDir( parser );
 		if ( dir == null ) {
 			return;
 		}
-		System.out.println( dir.toString() );
 		try {
-			List<Path> files = Traverser.validFiles( dir );
-			FileIO f = new FileIO();
-			for ( Path file : files ) {
-				f.parseInput( file );
-			}
-			Path outputFile = getOutput();
-			if ( outputFile == null ) {
-				return;
-			}
-			f.writeOutput( outputFile );
+
+			new FileIO( Traverser.validFiles( dir ), getOutput( parser ) );
+
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );
@@ -34,9 +25,8 @@ public class Driver {
 		}
 	}
 
-	private static Path getDir( String[] args ) {
+	private static Path getDir( ArgumentParser parser ) {
 
-		parser = new ArgumentParser( args );
 		if ( !parser.hasFlag( DIR ) || !parser.hasValue( DIR ) ) {
 			System.out.println( "Sorry you must specify a directory..." );
 			return null;
@@ -50,7 +40,7 @@ public class Driver {
 		return dir.normalize();
 	}
 
-	private static Path getOutput() {
+	private static Path getOutput( ArgumentParser parser ) {
 
 		return Paths.get( parser.getValue( INDEX, "index.json" ) );
 	}

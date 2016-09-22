@@ -16,6 +16,17 @@ public class FileIO {
 		index = new InvertedIndex();
 	}
 
+	public FileIO( List<Path> files, Path outputFile ) throws IOException {
+		this();
+		for ( Path file : files ) {
+			parseInput( file );
+		}
+		if ( outputFile == null ) {
+			return;
+		}
+		writeOutput( outputFile );
+	}
+
 	private StringBuilder getJSON() {
 
 		return JSONBuilder.makeInvertedIndexJSON( index.getData() );
