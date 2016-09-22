@@ -13,7 +13,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private Map<String, Map<String, Set<Integer>>> index;
+	private Map<String, Map<String, Set<Integer>>> index; // TODO Use the final keywords
 
 	/**
 	 * Initializes the index.
@@ -24,9 +24,11 @@ public class InvertedIndex {
 
 	}
 
+	// TODO Remove for now... 
 	public InvertedIndex( Map<String, Map<String, Set<Integer>>> fresh ) {
 		index = fresh;
 	}
+	
 
 	/**
 	 * Adds the word and the position it was found to the index.
@@ -43,6 +45,7 @@ public class InvertedIndex {
 			index.put( word, new TreeMap<>() );
 
 		}
+		
 		if ( index.get( word ).get( path ) == null ) {
 
 			index.get( word ).put( path, new TreeSet<>() );
@@ -68,7 +71,7 @@ public class InvertedIndex {
 	 * @return number of times the word was found
 	 */
 	public int count( String word ) {
-
+		// TODO Fix description, number of files the word was found (not number of times)
 		return index.get( word ) == null ? 0 : index.get( word ).size();
 
 	}
@@ -107,11 +110,13 @@ public class InvertedIndex {
 		return new ArrayList<String>( index.keySet() );
 	}
 
+	// TODO Still breaking encapsulation; remove this
 	public Map<String, Map<String, Set<Integer>>> getData() {
 
 		return Collections.unmodifiableMap( index );
 	}
 
+	// TODO This would only make sense if given the word and file
 	/**
 	 * Returns a copy of the positions for a specific word.
 	 * 
@@ -139,5 +144,11 @@ public class InvertedIndex {
 
 		return index.toString();
 	}
+	
+	/* TODO
+	public void toJSON(Path output) {
+		JSONWriter.toJSON(index, output);
+	}
+	*/
 
 }
