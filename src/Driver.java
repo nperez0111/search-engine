@@ -3,12 +3,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+// TODO Add Javadoc comments to all your classes and methods
+
 public class Driver {
 
 	private final static String DIR = "-dir";
 	private final static String INDEX = "-index";
+	
 	private static ArgumentParser parser;
 
+	// TODO Make ArgumentParser a local variable, consider collapsing some of the logic
+	
 	public static void main( String[] args ) {
 
 		Path dir = getDir( args );

@@ -4,6 +4,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+// TODO Make a similar JSONWriter class to avoid storing in a StringBuffer
+
 /**
  * Outputs certain Java objects to a file in a "pretty" JSON format using the
  * tab character to indent nested elements and the new line character to
