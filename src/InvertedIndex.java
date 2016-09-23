@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +14,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private Map<String, Map<String, Set<Integer>>> index; // TODO Use the final keywords
+	private final Map<String, Map<String, Set<Integer>>> index;
 
 	/**
 	 * Initializes the index.
@@ -23,12 +24,6 @@ public class InvertedIndex {
 		index = new TreeMap<>();
 
 	}
-
-	// TODO Remove for now... 
-	public InvertedIndex( Map<String, Map<String, Set<Integer>>> fresh ) {
-		index = fresh;
-	}
-	
 
 	/**
 	 * Adds the word and the position it was found to the index.
@@ -45,7 +40,7 @@ public class InvertedIndex {
 			index.put( word, new TreeMap<>() );
 
 		}
-		
+
 		if ( index.get( word ).get( path ) == null ) {
 
 			index.get( word ).put( path, new TreeSet<>() );
@@ -63,15 +58,14 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Returns the number of times a word was found (i.e. the number of
-	 * positions associated with a word in the index).
+	 * Returns the number of files a word is in.
 	 *
 	 * @param word
 	 *            word to look for
-	 * @return number of times the word was found
+	 * @return number of files the word was found in.
 	 */
-	public int count( String word ) {
-		// TODO Fix description, number of files the word was found (not number of times)
+	public int countOfFilesWithWord( String word ) {
+
 		return index.get( word ) == null ? 0 : index.get( word ).size();
 
 	}
@@ -144,11 +138,16 @@ public class InvertedIndex {
 
 		return index.toString();
 	}
-	
-	/* TODO
-	public void toJSON(Path output) {
-		JSONWriter.toJSON(index, output);
+
+	/**
+	 * Outputs the invertedIndex to a file.
+	 * 
+	 * @param output
+	 * @throws IOException
+	 */
+	public void toJSON( Path output ) throws IOException {
+
+		JSONWriter.toJSON( index, output );
 	}
-	*/
 
 }

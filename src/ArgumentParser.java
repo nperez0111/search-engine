@@ -1,8 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO Remove old TODO comments
-
 /**
  * Parses and stores an array of argument into flag, value pairs for easy access
  * later. Useful to parse command-line arguments.
@@ -30,7 +28,6 @@ public class ArgumentParser {
 	 * @see #parseArguments(String[])
 	 */
 	public ArgumentParser( String[] args ) {
-		// You do not need to modify this method.
 		this();
 		parseArguments( args );
 	}
@@ -113,7 +110,7 @@ public class ArgumentParser {
 	 */
 	public int numFlags() {
 
-		return argumentMap.size(); // TODO: Update this.
+		return argumentMap.size();
 	}
 
 	/**
@@ -125,7 +122,7 @@ public class ArgumentParser {
 	 */
 	public boolean hasFlag( String flag ) {
 
-		return argumentMap.containsKey( flag ); // TODO: Update this.
+		return argumentMap.containsKey( flag );
 	}
 
 	/**

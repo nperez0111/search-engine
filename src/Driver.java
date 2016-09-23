@@ -16,7 +16,7 @@ public class Driver {
 		}
 		try {
 
-			new FileIO( Traverser.validFiles( dir ), getOutput( parser ) );
+			InvertedIndexBuilder.build( dir, getOutput( parser ), new InvertedIndex() );
 
 		}
 		catch ( IOException e ) {
