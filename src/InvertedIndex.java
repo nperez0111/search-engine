@@ -1,10 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -51,9 +49,16 @@ public class InvertedIndex {
 
 	}
 
-	public void add( String word, Path p, int position ) {
+	/**
+	 * Adds the words and the position it was found within the specified path
+	 * 
+	 * @param word
+	 * @param path
+	 * @param position
+	 */
+	public void add( String word, Path path, int position ) {
 
-		add( word, p.toString(), position );
+		add( word, path.toString(), position );
 
 	}
 
@@ -102,32 +107,6 @@ public class InvertedIndex {
 	public List<String> getWords() {
 
 		return new ArrayList<String>( index.keySet() );
-	}
-
-	// TODO Still breaking encapsulation; remove this
-	public Map<String, Map<String, Set<Integer>>> getData() {
-
-		return Collections.unmodifiableMap( index );
-	}
-
-	// TODO This would only make sense if given the word and file
-	/**
-	 * Returns a copy of the positions for a specific word.
-	 * 
-	 * @param word
-	 *            to find in index
-	 * @return sorted list of positions for that word
-	 */
-	public List<Integer> getPositions( String word ) {
-
-		List<Integer> ret = new ArrayList<>();
-		for ( Entry<String, Set<Integer>> l : index.get( word ).entrySet() ) {
-			ret.addAll( l.getValue() );
-		}
-		Collections.sort( ret );
-
-		return ret;
-
 	}
 
 	/**

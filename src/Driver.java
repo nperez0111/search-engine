@@ -16,7 +16,7 @@ public class Driver {
 		}
 		try {
 
-			InvertedIndexBuilder.build( dir, getOutput( parser ), new InvertedIndex() );
+			InvertedIndexBuilder.build( dir, getOutputFile( parser ), new InvertedIndex() );
 
 		}
 		catch ( IOException e ) {
@@ -25,6 +25,12 @@ public class Driver {
 		}
 	}
 
+	/**
+	 * Gets the directory from the argument parser
+	 * 
+	 * @param parser
+	 * @return a path or null if the directory is not found
+	 */
 	private static Path getDir( ArgumentParser parser ) {
 
 		if ( !parser.hasFlag( DIR ) || !parser.hasValue( DIR ) ) {
@@ -40,7 +46,14 @@ public class Driver {
 		return dir.normalize();
 	}
 
-	private static Path getOutput( ArgumentParser parser ) {
+	/**
+	 * gets the output file from the argument parser or by default uses
+	 * index.json in the current directory
+	 * 
+	 * @param parser
+	 * @return the path of the output file
+	 */
+	private static Path getOutputFile( ArgumentParser parser ) {
 
 		return Paths.get( parser.getValue( INDEX, "index.json" ) );
 	}
