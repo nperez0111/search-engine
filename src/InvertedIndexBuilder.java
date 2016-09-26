@@ -10,17 +10,6 @@ import java.util.List;
 public abstract class InvertedIndexBuilder {
 
 	/**
-	 * Cleans up the line removing any non alphanumeric character
-	 * 
-	 * @param s
-	 * @return
-	 */
-	private static String cleanUpLine( String s ) {
-
-		return s.trim().replaceAll( "\\p{Punct}+", "" ).toLowerCase();
-	}
-
-	/**
 	 * Take a file and put all the words into an index into the index
 	 * 
 	 * @param input
@@ -36,7 +25,7 @@ public abstract class InvertedIndexBuilder {
 
 			while ( ( line = reader.readLine() ) != null ) {
 				List<String> list = new ArrayList<>(
-						Arrays.asList( InvertedIndexBuilder.cleanUpLine( line ).split( " " ) ) );
+						Arrays.asList( StringCleaner.stripNonAlphaNumeric( line ).split( " " ) ) );
 				for ( String word : list ) {
 					if ( !word.trim().equals( "" ) ) {
 						index.add( word.trim(), fileName, count );
