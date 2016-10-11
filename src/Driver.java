@@ -6,6 +6,9 @@ public class Driver {
 
 	private final static String DIR = "-dir";
 	private final static String INDEX = "-index";
+	private final static String QUERY = "-query";
+	private final static String RESULTS = "-results";
+	private final static String EXACT = "-exact";
 
 	public static void main( String[] args ) {
 
@@ -16,13 +19,21 @@ public class Driver {
 		}
 		try {
 
-			InvertedIndexBuilder.build( dir, getOutputFile( parser ), new InvertedIndex() );
+			InvertedIndex index = InvertedIndexBuilder.build( dir, getOutputFile( parser, INDEX, "index.json" ),
+					new InvertedIndex() );
+			if ( parser.hasFlag( QUERY ) ) {
+				PartialSearchInvertedIndex.search( dir, getOutputFile( parser, RESULTS, "results.json" ), index );
+			}
+			else if ( parser.hasFlag( EXACT ) ) {
+				// TODO Write what to do when asked for exact search
+			}
 
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );
 			return;
 		}
+
 	}
 
 	/**
@@ -53,8 +64,8 @@ public class Driver {
 	 * @param parser
 	 * @return the path of the output file
 	 */
-	private static Path getOutputFile( ArgumentParser parser ) {
+	private static Path getOutputFile( ArgumentParser parser, String whichFile, String defaultFile ) {
 
-		return Paths.get( parser.getValue( INDEX, "index.json" ) );
+		return Paths.get( parser.getValue( whichFile, defaultFile ) );
 	}
 }
