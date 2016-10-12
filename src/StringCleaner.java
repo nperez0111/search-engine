@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,6 +55,11 @@ public abstract class StringCleaner {
 
 		return ret;
 
+	}
+
+	public static List<String> cleanAndSort( String s ) {
+
+		return cleanAndSort( new ArrayList<String>( Arrays.asList( s.split( " " ) ) ) );
 	}
 
 }

@@ -13,7 +13,7 @@ public class Driver {
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
-		Path dir = getDir( parser );
+		Path dir = getDir( parser, DIR );
 		if ( dir == null ) {
 			return;
 		}
@@ -22,7 +22,14 @@ public class Driver {
 			InvertedIndex index = InvertedIndexBuilder.build( dir, getOutputFile( parser, INDEX, "index.json" ),
 					new InvertedIndex() );
 			if ( parser.hasFlag( QUERY ) ) {
-				PartialSearchInvertedIndex.search( dir, getOutputFile( parser, RESULTS, "results.json" ), index );
+
+				Path inputFile = getDir( parser, QUERY );
+
+				if ( inputFile == null ) {
+					return;
+				}
+
+				PartialSearchInvertedIndex.search( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
 			}
 			else if ( parser.hasFlag( EXACT ) ) {
 				// TODO Write what to do when asked for exact search
@@ -42,14 +49,14 @@ public class Driver {
 	 * @param parser
 	 * @return a path or null if the directory is not found
 	 */
-	private static Path getDir( ArgumentParser parser ) {
+	private static Path getDir( ArgumentParser parser, String flag ) {
 
-		if ( !parser.hasFlag( DIR ) || !parser.hasValue( DIR ) ) {
+		if ( !parser.hasFlag( flag ) || !parser.hasValue( flag ) ) {
 			System.out.println( "Sorry you must specify a directory..." );
 			return null;
 		}
 
-		Path dir = Paths.get( parser.getValue( DIR ) );
+		Path dir = Paths.get( parser.getValue( flag ) );
 		if ( dir == null ) {
 			System.out.println( "The directory you specified does not exist..." );
 			return null;

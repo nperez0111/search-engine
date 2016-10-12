@@ -75,6 +75,11 @@ public class InvertedIndex {
 
 	}
 
+	public Set<String> getFilesOfWord( String word ) {
+
+		return index.get( word ).keySet();
+	}
+
 	/**
 	 * Returns the number of words stored in the index.
 	 * 
@@ -83,6 +88,79 @@ public class InvertedIndex {
 	public int words() {
 
 		return index.keySet().size();
+
+	}
+
+	public int frequencyInFile( String word, String file ) {
+
+		return index.get( word ).get( file ).size();
+	}
+
+	public int getFirstOccurenceInFile( String word, String file ) {
+
+		for ( Integer i : index.get( word ).get( file ) ) {
+			return i.intValue();
+		}
+
+		return -1;
+	}
+
+	/**
+	 * Returns all the matching results
+	 * 
+	 * @param query
+	 * @param partial
+	 * @return
+	 */
+	private List<Result> resultOfWord( String word ) {
+
+		List<Result> results = new ArrayList<>();
+		Set<String> files = getFilesOfWord( word );
+		for ( String file : files ) {
+			int count = frequencyInFile( word, file );
+			int index = getFirstOccurenceInFile( word, file );
+			results.add( new Result( file, count, index ) );
+		}
+
+		return results;
+
+	}
+
+	private boolean startsWithAnyWord( List<String> queries, String word ) {
+
+		for ( String query : queries ) {
+			if ( word.startsWith( query ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<Result> search( String query, boolean partial ) {
+
+		List<String> queries = StringCleaner.cleanAndSort( query );
+		List<Result> results = new ArrayList<>();
+		for ( String word : getWords() ) {
+			if ( partial ) {
+				if ( startsWithAnyWord( queries, word ) ) {
+
+					results.addAll( resultOfWord( word ) );
+				}
+				else {
+
+					if ( query.charAt( 0 ) < word.charAt( 0 ) ) {
+						// TODO test break;
+					}
+				}
+
+			}
+			else {
+				if ( word.equals( query ) ) {
+					results.addAll( resultOfWord( word ) );
+				}
+			}
+		}
+		return results;
 
 	}
 
