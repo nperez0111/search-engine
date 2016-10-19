@@ -18,8 +18,22 @@ public abstract class PartialSearchInvertedIndex {
 		for ( String query : queries ) {
 			results.add( index.search( query, true ) );
 		}
+		if ( outputFile == null ) {
+			return index;
+		}
+		outputToFile( outputFile, results );
 
 		return null;
+
+	}
+
+	private static void outputToFile( Path outputFile, List<List<Result>> results ) throws IOException {
+
+		for ( List<Result> perQuery : results ) {
+			for ( Result result : perQuery ) {
+				result.toJSON( outputFile );
+			}
+		}
 
 	}
 

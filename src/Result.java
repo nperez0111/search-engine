@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Path;
+
 public class Result implements Comparable<Result> {
 
 	private int count;
@@ -32,7 +35,7 @@ public class Result implements Comparable<Result> {
 		return 0;
 	}
 
-	public void toJSON() {
+	public void toJSON( Path outputFile ) throws IOException {
 
 		System.out.println( where + ":" + count + ":" + index + "\n" );
 
