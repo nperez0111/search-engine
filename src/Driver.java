@@ -11,13 +11,20 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser( args );
 		Path dir = getDir( parser );
+		InvertedIndex index;
 		if ( dir == null ) {
 			return;
 		}
 		try {
 
-			InvertedIndexBuilder.build( dir, getOutputFile( parser ), new InvertedIndex() );
+			index = InvertedIndexBuilder.build( dir );
+			Path outputFile = getOutputFile( parser );
 
+			if ( outputFile != null ) {
+
+				index.toJSON( outputFile );
+
+			}
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );

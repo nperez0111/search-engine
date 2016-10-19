@@ -17,7 +17,7 @@ public abstract class InvertedIndexBuilder {
 	 */
 	private static String cleanUpLine( String s ) {
 
-		return s.trim().replaceAll( "\\p{Punct}+", "" ).toLowerCase();
+		return s.trim().replaceAll( "\\p{Punct}+", "" ).replaceAll( "\\s+", " " ).toLowerCase();
 	}
 
 	/**
@@ -36,7 +36,7 @@ public abstract class InvertedIndexBuilder {
 
 			while ( ( line = reader.readLine() ) != null ) {
 				List<String> list = new ArrayList<>(
-						Arrays.asList( InvertedIndexBuilder.cleanUpLine( line ).split( " " ) ) );
+						Arrays.asList( InvertedIndexBuilder.cleanUpLine( line ).split( "\\s" ) ) );
 				for ( String word : list ) {
 					if ( !word.trim().equals( "" ) ) {
 						index.add( word.trim(), fileName, count );
@@ -58,17 +58,14 @@ public abstract class InvertedIndexBuilder {
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath, Path outputFile, InvertedIndex index ) throws IOException {
+	public static InvertedIndex build( Path inputPath ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
-
+		InvertedIndex index = new InvertedIndex();
 		for ( Path file : files ) {
 			parseInput( file, index );
 		}
-		if ( outputFile == null ) {
-			return index;
-		}
-		index.toJSON( outputFile );
 		return index;
+
 	}
 }
