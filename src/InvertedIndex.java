@@ -119,7 +119,7 @@ public class InvertedIndex {
 		for ( String file : files ) {
 			int count = frequencyInFile( word, file );
 			int index = getFirstOccurenceInFile( word, file );
-			results.add( new Result( file, count, index ) );
+			results.add( new Result( word, file, count, index ) );
 		}
 
 		return results;
@@ -136,6 +136,18 @@ public class InvertedIndex {
 		return false;
 	}
 
+	private boolean wordIsInList( String query, List<Result> lis ) {
+
+		for ( Result r : lis ) {
+			if ( r.getWord().equals( query ) ) {
+				r.incrementCount();
+				return true;
+			}
+		}
+		return false;
+
+	}
+
 	public List<Result> search( String query, boolean partial ) {
 
 		List<String> queries = StringCleaner.cleanAndSort( query );
@@ -144,7 +156,10 @@ public class InvertedIndex {
 			if ( partial ) {
 				if ( startsWithAnyWord( queries, word ) ) {
 
-					results.addAll( resultOfWord( word ) );
+					if ( wordIsInList( word, results ) == false ) {
+						results.addAll( resultOfWord( word ) );
+					}
+
 				}
 				else {
 
@@ -155,11 +170,12 @@ public class InvertedIndex {
 
 			}
 			else {
-				if ( word.equals( query ) ) {
+				if ( wordIsInList( word, results ) == false ) {
 					results.addAll( resultOfWord( word ) );
 				}
 			}
 		}
+		System.out.println( results.toString() );
 		return results;
 
 	}
