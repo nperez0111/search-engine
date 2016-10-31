@@ -1,4 +1,7 @@
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Result implements Comparable<Result> {
@@ -39,6 +42,8 @@ public class Result implements Comparable<Result> {
 
 		System.out.println( where + ":" + count + ":" + index + "\n" );
 
-		// TODO Write ToJSON for result
+		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.defaultCharset() ); ) {
+
+		}
 	}
 }
