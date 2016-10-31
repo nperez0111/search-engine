@@ -11,7 +11,7 @@ public abstract class InvertedIndexBuilder {
 
 	/**
 	 * Take a file and put all the words into an index into the index
-	 * 
+	 *
 	 * @param input
 	 * @param index
 	 * @throws IOException
@@ -41,23 +41,20 @@ public abstract class InvertedIndexBuilder {
 	 * This goes through all the files from the input path and adds all the
 	 * necessary data to the InvertedIndex. Then Prints the InvertedIndex when
 	 * finished adding all the necessary data.
-	 * 
+	 *
 	 * @param inputPath
 	 * @param outputFile
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath, Path outputFile, InvertedIndex index ) throws IOException {
+	public static InvertedIndex build( Path inputPath ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
-
+		InvertedIndex index = new InvertedIndex();
 		for ( Path file : files ) {
 			parseInput( file, index );
 		}
-		if ( outputFile == null ) {
-			return index;
-		}
-		index.toJSON( outputFile );
 		return index;
+
 	}
 }

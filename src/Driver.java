@@ -14,13 +14,21 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser( args );
 		Path dir = getDir( parser, DIR );
+		InvertedIndex index;
 		if ( dir == null ) {
 			return;
 		}
 		try {
 
-			InvertedIndex index = InvertedIndexBuilder.build( dir, getOutputFile( parser, INDEX, "index.json" ),
-					new InvertedIndex() );
+			index = InvertedIndexBuilder.build( dir );
+			Path outputFile = getOutputFile( parser, INDEX, "index.json" );
+
+			if ( outputFile != null ) {
+
+				index.toJSON( outputFile );
+
+			}
+
 			if ( parser.hasFlag( QUERY ) ) {
 
 				Path inputFile = getDir( parser, QUERY );
@@ -34,18 +42,16 @@ public class Driver {
 			else if ( parser.hasFlag( EXACT ) ) {
 				// TODO Write what to do when asked for exact search
 			}
-
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );
 			return;
 		}
-
 	}
 
 	/**
 	 * Gets the directory from the argument parser
-	 * 
+	 *
 	 * @param parser
 	 * @return a path or null if the directory is not found
 	 */
@@ -67,12 +73,12 @@ public class Driver {
 	/**
 	 * gets the output file from the argument parser or by default uses
 	 * index.json in the current directory
-	 * 
+	 *
 	 * @param parser
 	 * @return the path of the output file
 	 */
-	private static Path getOutputFile( ArgumentParser parser, String whichFile, String defaultFile ) {
+	private static Path getOutputFile( ArgumentParser parser, String flag, String defaulter ) {
 
-		return Paths.get( parser.getValue( whichFile, defaultFile ) );
+		return Paths.get( parser.getValue( flag, defaulter ) );
 	}
 }
