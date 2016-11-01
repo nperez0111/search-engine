@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -144,45 +145,24 @@ public class InvertedIndex {
 	 * return lowest; }
 	 */
 
-	public int getFirstOccurenceInAFile( String word, String file ) {
+	public int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
 
 		Integer lowest = Integer.MAX_VALUE;
+		System.out.println( index.get( word ).get( file ) );
+		for ( String s : wordsThatMatch( word, partial ) ) {
+			System.out.println( "word:" + word + ":" + s );
+			for ( Integer i : index.get( s ).get( file ) ) {
 
-		for ( Integer i : index.get( word ).get( file ) ) {
+				if ( lowest.intValue() > i.intValue() ) {
+					lowest = i;
+				}
 
-			if ( lowest.intValue() > i.intValue() ) {
-				lowest = i;
 			}
-
 		}
 
 		return lowest;
 
 	}
-
-	/**
-	 * Returns all the matching results
-	 * 
-	 * @param query
-	 * @param partial
-	 * @return
-	 */
-	/*
-	 * private List<Result> resultOfWord( String word, String query, boolean
-	 * partial ) {
-	 * 
-	 * System.out.println( word ); List<Result> results = new ArrayList<>();
-	 * Set<String> files = getFilesOfWord( word ); System.out.println( "Query:"
-	 * + query ); for ( String file : files ) { int count = frequencyInFile(
-	 * query, file ); int index = getFirstOccurenceInAnyFile( wordsThatMatch(
-	 * query, partial ) ); System.out.println( "Word:" + word + ",count:" +
-	 * count + ",index:" + index + "\n" ); if ( wordIsInList( query, results )
-	 * == false ) { results.add( new Result( query, file, count, index ) ); } }
-	 * 
-	 * return results;
-	 * 
-	 * }
-	 */
 
 	private boolean startsWithAnyWord( List<String> queries, String word ) {
 
@@ -204,11 +184,14 @@ public class InvertedIndex {
 		return false;
 	}
 
-	private boolean wordIsInList( String query, List<Result> lis ) {
+	private boolean wordIsInList( String query, List<Result> lis, int index, int count ) {
 
 		for ( Result r : lis ) {
 			if ( r.getWhere().equals( query ) ) {
-				r.incrementCount();
+				r.incCount( count );
+				if ( r.getIndex() > index ) {
+					r.setIndex( index );
+				}
 				return true;
 			}
 		}
@@ -226,17 +209,19 @@ public class InvertedIndex {
 
 			for ( String file : index.get( word ).keySet() ) {
 
-				int index = getFirstOccurenceInAFile( word, file );
+				int index = getFirstOccurenceInAFile( word, file, partial );
 				int count = frequencyInFile( word, file );
 
-				if ( !wordIsInList( file, results ) ) {
+				if ( !wordIsInList( file, results, index, count ) ) {
 
 					results.add( new Result( cleanedQuery, file, count, index ) );
 
 				}
 			}
 		}
-
+		System.out.println( results.toString() );
+		Collections.sort( results );
+		System.out.println( results.toString() );
 		return results;
 
 	}

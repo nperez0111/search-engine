@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class PartialSearchInvertedIndex {
@@ -12,7 +13,7 @@ public abstract class PartialSearchInvertedIndex {
 	public static InvertedIndex search( Path inputFile, Path outputFile, InvertedIndex index ) throws IOException {
 
 		List<String> queries = PartialSearchInvertedIndex.getSearchQueries( inputFile );
-
+		Collections.sort( queries );
 		// This stores the list of results returned per query
 		List<List<Result>> results = new ArrayList<>();
 
@@ -62,7 +63,7 @@ public abstract class PartialSearchInvertedIndex {
 		try ( BufferedReader reader = Files.newBufferedReader( inputFile, Charset.forName( "UTF8" ) ); ) {
 			String line = null;
 			while ( ( line = reader.readLine() ) != null ) {
-				list.add( StringCleaner.stripNonAlphaNumeric( line ) );
+				list.add( String.join( " ", StringCleaner.cleanAndSort( line ) ) );
 			}
 		}
 		return list;

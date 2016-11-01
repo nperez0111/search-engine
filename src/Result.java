@@ -48,9 +48,9 @@ public class Result implements Comparable<Result> {
 	/**
 	 * Increments the amount of times a word has appeared in a file
 	 */
-	public void incrementCount() {
+	public void incCount( int c ) {
 
-		count += 1;
+		count += c;
 	}
 
 	/**
@@ -63,13 +63,18 @@ public class Result implements Comparable<Result> {
 		return index;
 	}
 
+	public void setIndex( int i ) {
+
+		index = i;
+	}
+
 	@Override
 	public int compareTo( Result o ) {
 
-		if ( count > o.getCount() ) {
-			return Integer.compare( count, o.getCount() );
+		if ( count != o.getCount() ) {
+			return Integer.compare( o.getCount(), count );
 		}
-		if ( index < o.getIndex() ) {
+		if ( index != o.getIndex() ) {
 			// TODO if sorting is wrong check this
 			return Integer.compare( o.getIndex(), index );
 		}
