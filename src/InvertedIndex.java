@@ -149,20 +149,12 @@ public class InvertedIndex {
 
 		Integer lowest = Integer.MAX_VALUE;
 
-		for ( String s : wordsThatMatch( word, partial ) ) {
-			// System.out.println( "word:" + word + ":" + s );
-			// System.out.println( "File:" + file + ",index:" + index.get( s
-			// ).toString() );
-			if ( index.get( s ).get( file ) == null ) {
-				continue;
-			}
-			for ( Integer i : index.get( s ).get( file ) ) {
+		for ( Integer i : index.get( word ).get( file ) ) {
 
-				if ( lowest.intValue() > i.intValue() ) {
-					lowest = i;
-				}
-
+			if ( lowest.intValue() > i.intValue() ) {
+				lowest = i;
 			}
+
 		}
 
 		return lowest;
