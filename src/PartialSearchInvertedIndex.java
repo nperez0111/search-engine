@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -21,18 +22,27 @@ public abstract class PartialSearchInvertedIndex {
 		if ( outputFile == null ) {
 			return index;
 		}
-		outputToFile( outputFile, results );
+		outputToFile( outputFile, results, queries );
 
 		return null;
 
 	}
 
-	private static void outputToFile( Path outputFile, List<List<Result>> results ) throws IOException {
+	private static void outputToFile( Path outputFile, List<List<Result>> results, List<String> queries )
+			throws IOException {
 
-		for ( List<Result> perQuery : results ) {
-			for ( Result result : perQuery ) {
-				result.toJSON( outputFile );
+		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.defaultCharset() ); ) {
+			int c = 0;
+			writer.write( "{\n" );
+			for ( List<Result> perQuery : results ) {
+				writer.write( "\t\"" + queries.get( c ) + "\": [\n" );
+				for ( Result result : perQuery ) {
+					result.toJSON( writer );
+				}
+				c++;
+				writer.write( "\t]" + ( results.size() == c ? "" : "," ) );
 			}
+			writer.write( "}\n" );
 		}
 
 	}

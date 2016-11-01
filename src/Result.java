@@ -1,8 +1,5 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class Result implements Comparable<Result> {
 
@@ -86,13 +83,11 @@ public class Result implements Comparable<Result> {
 	 * @param outputFile
 	 * @throws IOException
 	 */
-	public void toJSON( Path outputFile ) throws IOException {
+	public void toJSON( BufferedWriter writer ) throws IOException {
 
 		// System.out.println( where + ":" + count + ":" + index + "\n" );
 
-		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.defaultCharset() ); ) {
-
-		}
+		JSONWriter.resultToJSON( writer, where, count, index );
 	}
 
 	/**

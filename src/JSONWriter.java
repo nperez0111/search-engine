@@ -1,5 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +30,7 @@ public class JSONWriter {
 	 * @param text
 	 * @return "text" in quotes
 	 */
-	private static String quote( String text ) {
+	public static String quote( String text ) {
 
 		return String.format( "\"%s\"", text );
 	}
@@ -41,7 +42,7 @@ public class JSONWriter {
 	 *            number of tab characters
 	 * @return n tab characters concatenated
 	 */
-	private static String tab( int n ) {
+	public static String tab( int n ) {
 
 		char[] tabs = new char[n];
 		Arrays.fill( tabs, TAB );
@@ -166,6 +167,16 @@ public class JSONWriter {
 		int amountToTab = 1;
 
 		JSONWriter.pleaseJSON( elements, output, amountToTab );
+	}
+
+	public static void resultToJSON( Writer writer, String where, int count, int index ) throws IOException {
+
+		writer.write( tab( 2 ) + "{" + END );
+		writer.write( tab( 3 ) + quote( "where" ) + ":" + where + "," + END );
+		writer.write( tab( 3 ) + quote( "count" ) + ":" + count + "," + END );
+		writer.write( tab( 3 ) + quote( "index" ) + ":" + index + "," + END );
+		writer.write( tab( 2 ) + "}" );
+
 	}
 
 }
