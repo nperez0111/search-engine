@@ -28,19 +28,21 @@ public class Driver {
 				index.toJSON( outputFile );
 
 			}
-
-			if ( parser.hasFlag( QUERY ) ) {
-
+			if ( parser.hasFlag( QUERY ) || parser.hasFlag( EXACT ) ) {
 				Path inputFile = getDir( parser, QUERY );
 
 				if ( inputFile == null ) {
 					return;
 				}
 
-				PartialSearchInvertedIndex.search( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
-			}
-			else if ( parser.hasFlag( EXACT ) ) {
-				// TODO Write what to do when asked for exact search
+				if ( parser.hasFlag( QUERY ) ) {
+
+					SearchInvertedIndex.partial( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
+				}
+				else if ( parser.hasFlag( EXACT ) ) {
+
+					SearchInvertedIndex.exact( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
+				}
 			}
 		}
 		catch ( IOException e ) {

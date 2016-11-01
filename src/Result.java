@@ -76,7 +76,7 @@ public class Result implements Comparable<Result> {
 		}
 		if ( index != o.getIndex() ) {
 			// TODO if sorting is wrong check this
-			return Integer.compare( o.getIndex(), index );
+			return Integer.compare( index, o.getIndex() );
 		}
 
 		return where.toLowerCase().compareTo( o.getWhere().toLowerCase() );

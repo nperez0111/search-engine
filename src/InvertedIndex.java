@@ -148,9 +148,14 @@ public class InvertedIndex {
 	public int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
 
 		Integer lowest = Integer.MAX_VALUE;
-		System.out.println( index.get( word ).get( file ) );
+
 		for ( String s : wordsThatMatch( word, partial ) ) {
-			System.out.println( "word:" + word + ":" + s );
+			// System.out.println( "word:" + word + ":" + s );
+			// System.out.println( "File:" + file + ",index:" + index.get( s
+			// ).toString() );
+			if ( index.get( s ).get( file ) == null ) {
+				continue;
+			}
 			for ( Integer i : index.get( s ).get( file ) ) {
 
 				if ( lowest.intValue() > i.intValue() ) {
@@ -219,9 +224,9 @@ public class InvertedIndex {
 				}
 			}
 		}
-		System.out.println( results.toString() );
+		// System.out.println( results.toString() );
 		Collections.sort( results );
-		System.out.println( results.toString() );
+		// System.out.println( results.toString() );
 		return results;
 
 	}
