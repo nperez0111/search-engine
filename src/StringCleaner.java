@@ -39,9 +39,9 @@ public abstract class StringCleaner {
 		List<String> ret = new ArrayList<>();
 
 		for ( String element : list ) {
-
-			ret.add( StringCleaner.normalize( element ) );
-
+			if ( element.equals( "" ) == false ) {
+				ret.add( StringCleaner.normalize( element ) );
+			}
 		}
 
 		ret.sort( new Comparator<String>() {
@@ -59,7 +59,7 @@ public abstract class StringCleaner {
 
 	public static List<String> cleanAndSort( String s ) {
 
-		return cleanAndSort( new ArrayList<String>( Arrays.asList( s.split( " " ) ) ) );
+		return cleanAndSort( new ArrayList<String>( Arrays.asList( StringCleaner.normalize( s ).split( "\\s" ) ) ) );
 	}
 
 }
