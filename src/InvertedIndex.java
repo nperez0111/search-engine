@@ -96,13 +96,68 @@ public class InvertedIndex {
 		return index.get( word ).get( file ).size();
 	}
 
-	public int getFirstOccurenceInFile( String word, String file ) {
+	private List<String> wordsThatMatch( String word, boolean partial ) {
+
+		List<String> list = new ArrayList<>();
+		for ( String s : getWords() ) {
+			if ( partial ) {
+				if ( !s.startsWith( word ) ) {
+					continue;
+				}
+			}
+			else {
+				if ( !s.equals( word ) ) {
+					continue;
+				}
+			}
+			list.add( s );
+		}
+		return list;
+	}
+
+	private List<String> wordsThatMatch( List<String> words, boolean partial ) {
+
+		List<String> list = new ArrayList<>();
+		for ( String s : getWords() ) {
+			if ( partial ) {
+				if ( !startsWithAnyWord( words, s ) ) {
+					continue;
+				}
+			}
+			else {
+				if ( !equalsAnyWord( words, s ) ) {
+					continue;
+				}
+			}
+			list.add( s );
+		}
+		return list;
+	}
+
+	/*
+	 * public int getFirstOccurenceInAnyFile( List<String> words ) {
+	 * 
+	 * Integer lowest = Integer.MAX_VALUE; for ( String s : words ) { for (
+	 * Set<Integer> set : index.get( s ).values() ) { for ( Integer i : set ) {
+	 * if ( lowest.intValue() > i.intValue() ) { lowest = i; } } } }
+	 * 
+	 * return lowest; }
+	 */
+
+	public int getFirstOccurenceInAFile( String word, String file ) {
+
+		Integer lowest = Integer.MAX_VALUE;
 
 		for ( Integer i : index.get( word ).get( file ) ) {
-			return i.intValue();
+
+			if ( lowest.intValue() > i.intValue() ) {
+				lowest = i;
+			}
+
 		}
 
-		return -1;
+		return lowest;
+
 	}
 
 	/**
@@ -112,19 +167,22 @@ public class InvertedIndex {
 	 * @param partial
 	 * @return
 	 */
-	private List<Result> resultOfWord( String word ) {
-
-		List<Result> results = new ArrayList<>();
-		Set<String> files = getFilesOfWord( word );
-		for ( String file : files ) {
-			int count = frequencyInFile( word, file );
-			int index = getFirstOccurenceInFile( word, file );
-			results.add( new Result( word, file, count, index ) );
-		}
-
-		return results;
-
-	}
+	/*
+	 * private List<Result> resultOfWord( String word, String query, boolean
+	 * partial ) {
+	 * 
+	 * System.out.println( word ); List<Result> results = new ArrayList<>();
+	 * Set<String> files = getFilesOfWord( word ); System.out.println( "Query:"
+	 * + query ); for ( String file : files ) { int count = frequencyInFile(
+	 * query, file ); int index = getFirstOccurenceInAnyFile( wordsThatMatch(
+	 * query, partial ) ); System.out.println( "Word:" + word + ",count:" +
+	 * count + ",index:" + index + "\n" ); if ( wordIsInList( query, results )
+	 * == false ) { results.add( new Result( query, file, count, index ) ); } }
+	 * 
+	 * return results;
+	 * 
+	 * }
+	 */
 
 	private boolean startsWithAnyWord( List<String> queries, String word ) {
 
@@ -136,10 +194,20 @@ public class InvertedIndex {
 		return false;
 	}
 
+	private boolean equalsAnyWord( List<String> queries, String word ) {
+
+		for ( String query : queries ) {
+			if ( word.equals( query ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean wordIsInList( String query, List<Result> lis ) {
 
 		for ( Result r : lis ) {
-			if ( r.getWord().equals( query ) ) {
+			if ( r.getWhere().equals( query ) ) {
 				r.incrementCount();
 				return true;
 			}
@@ -151,31 +219,24 @@ public class InvertedIndex {
 	public List<Result> search( String query, boolean partial ) {
 
 		List<String> queries = StringCleaner.cleanAndSort( query );
+		String cleanedQuery = String.join( " ", queries );
 		List<Result> results = new ArrayList<>();
-		for ( String word : getWords() ) {
-			if ( partial ) {
-				if ( startsWithAnyWord( queries, word ) ) {
+		List<String> words = wordsThatMatch( queries, partial );
+		for ( String word : words ) {
 
-					if ( wordIsInList( word, results ) == false ) {
-						results.addAll( resultOfWord( word ) );
-					}
+			for ( String file : index.get( word ).keySet() ) {
 
-				}
-				else {
+				int index = getFirstOccurenceInAFile( word, file );
+				int count = frequencyInFile( word, file );
 
-					if ( query.charAt( 0 ) < word.charAt( 0 ) ) {
-						// TODO test break;
-					}
-				}
+				if ( !wordIsInList( file, results ) ) {
 
-			}
-			else {
-				if ( wordIsInList( word, results ) == false ) {
-					results.addAll( resultOfWord( word ) );
+					results.add( new Result( cleanedQuery, file, count, index ) );
+
 				}
 			}
 		}
-		System.out.println( results.toString() );
+
 		return results;
 
 	}
