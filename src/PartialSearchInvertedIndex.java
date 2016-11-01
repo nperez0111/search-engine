@@ -33,14 +33,23 @@ public abstract class PartialSearchInvertedIndex {
 
 		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.defaultCharset() ); ) {
 			int c = 0;
+			int j = 0;
 			writer.write( "{\n" );
 			for ( List<Result> perQuery : results ) {
 				writer.write( "\t\"" + queries.get( c ) + "\": [\n" );
 				for ( Result result : perQuery ) {
 					result.toJSON( writer );
+					j++;
+					if ( perQuery.size() != j ) {
+						writer.write( ",\n" );
+					}
+					else {
+						writer.write( "\n" );
+					}
 				}
+				j = 0;
 				c++;
-				writer.write( "\t]" + ( results.size() == c ? "" : "," ) );
+				writer.write( "\t]" + ( results.size() == c ? "" : "," ) + "\n" );
 			}
 			writer.write( "}\n" );
 		}

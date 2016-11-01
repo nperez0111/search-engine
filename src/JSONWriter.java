@@ -172,9 +172,9 @@ public class JSONWriter {
 	public static void resultToJSON( Writer writer, String where, int count, int index ) throws IOException {
 
 		writer.write( tab( 2 ) + "{" + END );
-		writer.write( tab( 3 ) + quote( "where" ) + ":" + where + "," + END );
-		writer.write( tab( 3 ) + quote( "count" ) + ":" + count + "," + END );
-		writer.write( tab( 3 ) + quote( "index" ) + ":" + index + "," + END );
+		writer.write( tab( 3 ) + quote( "where" ) + ": " + quote( where ) + "," + END );
+		writer.write( tab( 3 ) + quote( "count" ) + ": " + count + "," + END );
+		writer.write( tab( 3 ) + quote( "index" ) + ": " + index + END );
 		writer.write( tab( 2 ) + "}" );
 
 	}
