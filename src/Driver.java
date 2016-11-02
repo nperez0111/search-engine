@@ -29,7 +29,8 @@ public class Driver {
 
 			}
 			if ( parser.hasFlag( QUERY ) || parser.hasFlag( EXACT ) ) {
-				Path inputFile = getDir( parser, QUERY );
+				String flag = parser.hasFlag( QUERY ) ? QUERY : EXACT;
+				Path inputFile = getDir( parser, flag );
 
 				if ( inputFile == null ) {
 					return;
@@ -40,7 +41,6 @@ public class Driver {
 					SearchInvertedIndex.partial( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
 				}
 				else if ( parser.hasFlag( EXACT ) ) {
-
 					SearchInvertedIndex.exact( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
 				}
 			}

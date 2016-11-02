@@ -75,7 +75,6 @@ public class Result implements Comparable<Result> {
 			return Integer.compare( o.getCount(), count );
 		}
 		if ( index != o.getIndex() ) {
-			// TODO if sorting is wrong check this
 			return Integer.compare( index, o.getIndex() );
 		}
 
