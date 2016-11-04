@@ -10,19 +10,8 @@ import java.util.List;
 public abstract class InvertedIndexBuilder {
 
 	/**
-	 * Cleans up the line removing any non alphanumeric character
-	 * 
-	 * @param s
-	 * @return
-	 */
-	private static String cleanUpLine( String s ) {
-
-		return s.trim().replaceAll( "\\p{Punct}+", "" ).toLowerCase();
-	}
-
-	/**
 	 * Take a file and put all the words into an index into the index
-	 * 
+	 *
 	 * @param input
 	 * @param index
 	 * @throws IOException
@@ -36,7 +25,7 @@ public abstract class InvertedIndexBuilder {
 
 			while ( ( line = reader.readLine() ) != null ) {
 				List<String> list = new ArrayList<>(
-						Arrays.asList( InvertedIndexBuilder.cleanUpLine( line ).split( " " ) ) );
+						Arrays.asList( StringCleaner.stripNonAlphaNumeric( line ).split( " " ) ) );
 				for ( String word : list ) {
 					if ( !word.trim().equals( "" ) ) {
 						index.add( word.trim(), fileName, count );
@@ -52,23 +41,20 @@ public abstract class InvertedIndexBuilder {
 	 * This goes through all the files from the input path and adds all the
 	 * necessary data to the InvertedIndex. Then Prints the InvertedIndex when
 	 * finished adding all the necessary data.
-	 * 
+	 *
 	 * @param inputPath
 	 * @param outputFile
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath, Path outputFile, InvertedIndex index ) throws IOException {
+	public static InvertedIndex build( Path inputPath ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
-
+		InvertedIndex index = new InvertedIndex();
 		for ( Path file : files ) {
 			parseInput( file, index );
 		}
-		if ( outputFile == null ) {
-			return index;
-		}
-		index.toJSON( outputFile );
 		return index;
+
 	}
 }

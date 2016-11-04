@@ -6,18 +6,44 @@ public class Driver {
 
 	private final static String DIR = "-dir";
 	private final static String INDEX = "-index";
+	private final static String QUERY = "-query";
+	private final static String RESULTS = "-results";
+	private final static String EXACT = "-exact";
 
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
-		Path dir = getDir( parser );
+		Path dir = getDir( parser, DIR );
+		InvertedIndex index;
 		if ( dir == null ) {
 			return;
 		}
 		try {
 
-			InvertedIndexBuilder.build( dir, getOutputFile( parser ), new InvertedIndex() );
+			index = InvertedIndexBuilder.build( dir );
+			Path outputFile = getOutputFile( parser, INDEX, "index.json" );
 
+			if ( outputFile != null ) {
+
+				index.toJSON( outputFile );
+
+			}
+			if ( parser.hasFlag( QUERY ) || parser.hasFlag( EXACT ) ) {
+				String flag = parser.hasFlag( QUERY ) ? QUERY : EXACT;
+				Path inputFile = getDir( parser, flag );
+
+				if ( inputFile == null ) {
+					return;
+				}
+
+				if ( parser.hasFlag( QUERY ) ) {
+
+					SearchInvertedIndex.partial( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
+				}
+				else if ( parser.hasFlag( EXACT ) ) {
+					SearchInvertedIndex.exact( inputFile, getOutputFile( parser, RESULTS, "results.json" ), index );
+				}
+			}
 		}
 		catch ( IOException e ) {
 			System.out.println( "File may be in use or not exist.." );
@@ -27,18 +53,18 @@ public class Driver {
 
 	/**
 	 * Gets the directory from the argument parser
-	 * 
+	 *
 	 * @param parser
 	 * @return a path or null if the directory is not found
 	 */
-	private static Path getDir( ArgumentParser parser ) {
+	private static Path getDir( ArgumentParser parser, String flag ) {
 
-		if ( !parser.hasFlag( DIR ) || !parser.hasValue( DIR ) ) {
+		if ( !parser.hasFlag( flag ) || !parser.hasValue( flag ) ) {
 			System.out.println( "Sorry you must specify a directory..." );
 			return null;
 		}
 
-		Path dir = Paths.get( parser.getValue( DIR ) );
+		Path dir = Paths.get( parser.getValue( flag ) );
 		if ( dir == null ) {
 			System.out.println( "The directory you specified does not exist..." );
 			return null;
@@ -49,12 +75,12 @@ public class Driver {
 	/**
 	 * gets the output file from the argument parser or by default uses
 	 * index.json in the current directory
-	 * 
+	 *
 	 * @param parser
 	 * @return the path of the output file
 	 */
-	private static Path getOutputFile( ArgumentParser parser ) {
+	private static Path getOutputFile( ArgumentParser parser, String flag, String defaulter ) {
 
-		return Paths.get( parser.getValue( INDEX, "index.json" ) );
+		return Paths.get( parser.getValue( flag, defaulter ) );
 	}
 }

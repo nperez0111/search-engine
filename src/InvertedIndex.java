@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +76,11 @@ public class InvertedIndex {
 
 	}
 
+	public Set<String> getFilesOfWord( String word ) {
+
+		return index.get( word ).keySet();
+	}
+
 	/**
 	 * Returns the number of words stored in the index.
 	 * 
@@ -83,6 +89,137 @@ public class InvertedIndex {
 	public int words() {
 
 		return index.keySet().size();
+
+	}
+
+	public int frequencyInFile( String word, String file ) {
+
+		return index.get( word ).get( file ).size();
+	}
+
+	private List<String> wordsThatMatch( String word, boolean partial ) {
+
+		List<String> list = new ArrayList<>();
+		for ( String s : getWords() ) {
+			if ( partial ) {
+				if ( !s.startsWith( word ) ) {
+					continue;
+				}
+			}
+			else {
+				if ( !s.equals( word ) ) {
+					continue;
+				}
+			}
+			list.add( s );
+		}
+		return list;
+	}
+
+	private List<String> wordsThatMatch( List<String> words, boolean partial ) {
+
+		List<String> list = new ArrayList<>();
+		for ( String s : getWords() ) {
+			if ( partial ) {
+				if ( !startsWithAnyWord( words, s ) ) {
+					continue;
+				}
+			}
+			else {
+				if ( !equalsAnyWord( words, s ) ) {
+					continue;
+				}
+			}
+			list.add( s );
+		}
+		return list;
+	}
+
+	/*
+	 * public int getFirstOccurenceInAnyFile( List<String> words ) {
+	 * 
+	 * Integer lowest = Integer.MAX_VALUE; for ( String s : words ) { for (
+	 * Set<Integer> set : index.get( s ).values() ) { for ( Integer i : set ) {
+	 * if ( lowest.intValue() > i.intValue() ) { lowest = i; } } } }
+	 * 
+	 * return lowest; }
+	 */
+
+	public int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
+
+		Integer lowest = Integer.MAX_VALUE;
+
+		for ( Integer i : index.get( word ).get( file ) ) {
+
+			if ( lowest.intValue() > i.intValue() ) {
+				lowest = i;
+			}
+
+		}
+
+		return lowest;
+
+	}
+
+	private boolean startsWithAnyWord( List<String> queries, String word ) {
+
+		for ( String query : queries ) {
+			if ( word.startsWith( query ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean equalsAnyWord( List<String> queries, String word ) {
+
+		for ( String query : queries ) {
+			if ( word.equals( query ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean wordIsInList( String query, List<Result> lis, int index, int count ) {
+
+		for ( Result r : lis ) {
+			if ( r.getWhere().equals( query ) ) {
+				r.incCount( count );
+				if ( r.getIndex() > index ) {
+					r.setIndex( index );
+				}
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	public List<Result> search( String query, boolean partial ) {
+
+		List<String> queries = StringCleaner.cleanAndSort( query );
+		String cleanedQuery = String.join( " ", queries );
+		List<Result> results = new ArrayList<>();
+		List<String> words = wordsThatMatch( queries, partial );
+		for ( String word : words ) {
+
+			for ( String file : index.get( word ).keySet() ) {
+
+				int index = getFirstOccurenceInAFile( word, file, partial );
+				int count = frequencyInFile( word, file );
+
+				if ( !wordIsInList( file, results, index, count ) ) {
+
+					results.add( new Result( cleanedQuery, file, count, index ) );
+
+				}
+			}
+		}
+		// System.out.println( results.toString() );
+		Collections.sort( results );
+		// System.out.println( results.toString() );
+		return results;
 
 	}
 
