@@ -32,7 +32,7 @@ public abstract class SearchInvertedIndex {
 		List<List<Result>> results = new ArrayList<>();
 
 		for ( String query : queries ) {
-			results.add( index.search( query, true ) );
+			results.add( index.search( query, partial ) );
 		}
 		if ( outputFile == null ) {
 			return index;
