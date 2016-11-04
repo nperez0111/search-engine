@@ -57,9 +57,15 @@ public abstract class StringCleaner {
 
 	}
 
+	/**
+	 * cleans the string and splits it by word chars
+	 * 
+	 * @param s
+	 * @return
+	 */
 	public static List<String> cleanAndSort( String s ) {
 
-		return cleanAndSort( new ArrayList<String>( Arrays.asList( StringCleaner.normalize( s ).split( "\\s" ) ) ) );
+		return cleanAndSort( new ArrayList<String>( Arrays.asList( StringCleaner.normalize( s ).split( "\\s+" ) ) ) );
 	}
 
 }

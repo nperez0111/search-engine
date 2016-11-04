@@ -92,11 +92,25 @@ public class InvertedIndex {
 
 	}
 
-	public int frequencyInFile( String word, String file ) {
+	/**
+	 * returns the frequency of a word within a file
+	 * 
+	 * @param word
+	 * @param file
+	 * @return
+	 */
+	private int frequencyInFile( String word, String file ) {
 
 		return index.get( word ).get( file ).size();
 	}
 
+	/**
+	 * returns all words that partially or exactly match the given string
+	 * 
+	 * @param word
+	 * @param partial
+	 * @return
+	 */
 	private List<String> wordsThatMatch( String word, boolean partial ) {
 
 		List<String> list = new ArrayList<>();
@@ -116,21 +130,41 @@ public class InvertedIndex {
 		return list;
 	}
 
+	/**
+	 * returns all the words that match a list of words partially or exactly
+	 * 
+	 * @param words
+	 * @param partial
+	 * @return
+	 */
 	private List<String> wordsThatMatch( List<String> words, boolean partial ) {
 
 		List<String> list = new ArrayList<>();
-		for ( String s : getWords() ) {
-			if ( partial ) {
-				if ( !startsWithAnyWord( words, s ) ) {
-					continue;
+
+		if ( partial ) {
+			for ( String s : getWords() ) {
+
+				if ( startsWithAnyWord( words, s ) ) {
+
+					list.add( s );
+
 				}
+
 			}
-			else {
-				if ( !equalsAnyWord( words, s ) ) {
-					continue;
+
+		}
+		else {
+
+			for ( String word : words ) {
+
+				if ( index.containsKey( word ) ) {
+
+					list.add( word );
+
 				}
+
 			}
-			list.add( s );
+
 		}
 		return list;
 	}
@@ -145,7 +179,7 @@ public class InvertedIndex {
 	 * return lowest; }
 	 */
 
-	public int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
+	private int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
 
 		Integer lowest = Integer.MAX_VALUE;
 
@@ -161,6 +195,13 @@ public class InvertedIndex {
 
 	}
 
+	/**
+	 * returns true if the word matches any of the words in the list
+	 * 
+	 * @param queries
+	 * @param word
+	 * @return
+	 */
 	private boolean startsWithAnyWord( List<String> queries, String word ) {
 
 		for ( String query : queries ) {
@@ -171,16 +212,16 @@ public class InvertedIndex {
 		return false;
 	}
 
-	private boolean equalsAnyWord( List<String> queries, String word ) {
-
-		for ( String query : queries ) {
-			if ( word.equals( query ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
+	/**
+	 * returns true if the word being looked up is in the list if it is then
+	 * mutate the result to update to the best value
+	 * 
+	 * @param query
+	 * @param lis
+	 * @param index
+	 * @param count
+	 * @return
+	 */
 	private boolean wordIsInList( String query, List<Result> lis, int index, int count ) {
 
 		for ( Result r : lis ) {
@@ -196,6 +237,13 @@ public class InvertedIndex {
 
 	}
 
+	/**
+	 * actually performs the search of a string within the inverted index
+	 * 
+	 * @param query
+	 * @param partial
+	 * @return
+	 */
 	public List<Result> search( String query, boolean partial ) {
 
 		List<String> queries = StringCleaner.cleanAndSort( query );
