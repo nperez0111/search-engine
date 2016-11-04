@@ -11,18 +11,49 @@ import java.util.TreeSet;
 
 public abstract class SearchInvertedIndex {
 
+	/**
+	 * Performs a partial search into an inverted index provided, returns same
+	 * inverted index back
+	 * 
+	 * @param inputFile
+	 * @param outputFile
+	 * @param index
+	 * @return
+	 * @throws IOException
+	 */
 	public static InvertedIndex partial( Path inputFile, Path outputFile, InvertedIndex index ) throws IOException {
 
 		return SearchInvertedIndex.search( inputFile, outputFile, index, true );
 
 	}
 
+	/**
+	 * Performs an exact search into an invertedindex provided, returns same
+	 * inverted index back
+	 * 
+	 * @param inputFile
+	 * @param outputFile
+	 * @param index
+	 * @return
+	 * @throws IOException
+	 */
 	public static InvertedIndex exact( Path inputFile, Path outputFile, InvertedIndex index ) throws IOException {
 
 		return SearchInvertedIndex.search( inputFile, outputFile, index, false );
 
 	}
 
+	/**
+	 * Generalized searching into the invertedindex partial describes whether or
+	 * not the search is partial
+	 * 
+	 * @param inputFile
+	 * @param outputFile
+	 * @param index
+	 * @param partial
+	 * @return
+	 * @throws IOException
+	 */
 	private static InvertedIndex search( Path inputFile, Path outputFile, InvertedIndex index, boolean partial )
 			throws IOException {
 
@@ -43,6 +74,14 @@ public abstract class SearchInvertedIndex {
 
 	}
 
+	/**
+	 * Outputs the results per query to the specified output file
+	 * 
+	 * @param outputFile
+	 * @param results
+	 * @param queries
+	 * @throws IOException
+	 */
 	private static void outputToFile( Path outputFile, List<List<Result>> results, TreeSet<String> queries )
 			throws IOException {
 
@@ -72,6 +111,13 @@ public abstract class SearchInvertedIndex {
 
 	}
 
+	/**
+	 * returns all the normalized search queries within a file with no repitions
+	 * 
+	 * @param inputFile
+	 * @return
+	 * @throws IOException
+	 */
 	private static TreeSet<String> getSearchQueries( Path inputFile ) throws IOException {
 
 		TreeSet<String> list = new TreeSet<>();

@@ -63,11 +63,19 @@ public class Result implements Comparable<Result> {
 		return index;
 	}
 
+	/**
+	 * allows changing the index
+	 * 
+	 * @param i
+	 */
 	public void setIndex( int i ) {
 
 		index = i;
 	}
 
+	/**
+	 * Comparator for results
+	 */
 	@Override
 	public int compareTo( Result o ) {
 
