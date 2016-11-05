@@ -6,8 +6,18 @@ public class Result implements Comparable<Result> {
 	private int count;
 	private int index;
 	private final String where;
+	
+	// TODO Remove?
 	private final String word;
 
+	// TODO Variable names
+	/**
+	 * TODO
+	 * @param word
+	 * @param where
+	 * @param c
+	 * @param i
+	 */
 	public Result( String word, String where, int c, int i ) {
 		this.word = word;
 		count = c;
@@ -48,7 +58,7 @@ public class Result implements Comparable<Result> {
 	/**
 	 * Increments the amount of times a word has appeared in a file
 	 */
-	public void incCount( int c ) {
+	public void incCount( int c ) { // TODO addCount()
 
 		count += c;
 	}
@@ -68,7 +78,7 @@ public class Result implements Comparable<Result> {
 	 * 
 	 * @param i
 	 */
-	public void setIndex( int i ) {
+	public void setIndex( int i ) { // TODO Only do this if less than
 
 		index = i;
 	}
@@ -89,6 +99,7 @@ public class Result implements Comparable<Result> {
 		return where.toLowerCase().compareTo( o.getWhere().toLowerCase() );
 	}
 
+	// TODO Maybe remove?
 	/**
 	 * Outputs a single result to the file
 	 * 

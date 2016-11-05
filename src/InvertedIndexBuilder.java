@@ -7,7 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class InvertedIndexBuilder {
+/**
+ * TODO
+ * @author 
+ *
+ */
+public abstract class InvertedIndexBuilder { // TODO Should not be abstract!
 
 	/**
 	 * Take a file and put all the words into an index into the index
@@ -57,4 +62,6 @@ public abstract class InvertedIndexBuilder {
 		return index;
 
 	}
+	
+	// TODO public void build(Path inputPath, InvertedIndex index)
 }

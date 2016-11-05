@@ -13,7 +13,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private final Map<String, Map<String, Set<Integer>>> index;
+	private final Map<String, Map<String, Set<Integer>>> index; // TODO Don't upcast... there is a good reason!
 
 	/**
 	 * Initializes the index.
@@ -76,6 +76,7 @@ public class InvertedIndex {
 
 	}
 
+	// TODO No Javadoc, Null pointer exception if word doesnt exist, breaks encapsulation! REMOVE
 	public Set<String> getFilesOfWord( String word ) {
 
 		return index.get( word ).keySet();
@@ -104,6 +105,7 @@ public class InvertedIndex {
 		return index.get( word ).get( file ).size();
 	}
 
+	// TODO Delete unused method!
 	/**
 	 * returns all words that partially or exactly match the given string
 	 * 
@@ -245,6 +247,7 @@ public class InvertedIndex {
 	 * @return
 	 */
 	public List<Result> search( String query, boolean partial ) {
+		// TODO No string parsing within a data structure class
 
 		List<String> queries = StringCleaner.cleanAndSort( query );
 		String cleanedQuery = String.join( " ", queries );

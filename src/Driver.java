@@ -2,6 +2,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * TODO
+ * @author 
+ *
+ */
 public class Driver {
 
 	private final static String DIR = "-dir";
@@ -10,14 +15,43 @@ public class Driver {
 	private final static String RESULTS = "-results";
 	private final static String EXACT = "-exact";
 
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
 		Path dir = getDir( parser, DIR );
 		InvertedIndex index;
-		if ( dir == null ) {
+		
+		if ( dir == null ) { // TODO You are about to do a project where this will break it!
 			return;
 		}
+		
+		/*
+		 * ArgumentParser parser = new ArgumentParser( args );
+		 * InvertedIndex index = null;
+		 * 
+		 * if (parser.hasFlag(-dir)) {
+		 * 		build code, and the output if something went wrong
+		 * }
+		 * 
+		 * if (parser.hasFlag(-query) {
+		 * 
+		 * }
+		 * 
+		 * if (parser.hasFlag(-exact) {
+		 * 
+		 * }
+		 * 
+		 * if (parser.hasFlag(-index)) {
+		 * 		Path output = parser.getValue(-index, index.json);
+		 * }
+		 * 
+		 */
+		
+		
 		try {
 
 			index = InvertedIndexBuilder.build( dir );

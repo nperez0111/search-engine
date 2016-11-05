@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class StringCleaner {
+public abstract class StringCleaner { // TODO Not abstract!
 
 	/**
 	 * Cleans up the string removing any non alphanumeric character
@@ -23,7 +23,7 @@ public abstract class StringCleaner {
 	 * @param s
 	 * @return
 	 */
-	private static String normalize( String s ) {
+	private static String normalize( String s ) { // TODO Avoid 1 letter variable names unless in a for loop
 
 		return StringCleaner.stripNonAlphaNumeric( s ).toLowerCase();
 	}
@@ -34,8 +34,9 @@ public abstract class StringCleaner {
 	 * @param list
 	 * @return sorted list of cleaned strings
 	 */
-	public static List<String> cleanAndSort( List<String> list ) {
+	public static List<String> cleanAndSort( List<String> list ) { // TODO String[] words
 
+		// TODO ret is not the best variable name
 		List<String> ret = new ArrayList<>();
 
 		for ( String element : list ) {
@@ -43,7 +44,10 @@ public abstract class StringCleaner {
 				ret.add( StringCleaner.normalize( element ) );
 			}
 		}
+		
+		// TODO Arrays.sort();
 
+		// TODO Remove comparator?
 		ret.sort( new Comparator<String>() {
 
 			@Override
