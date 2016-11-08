@@ -9,7 +9,8 @@ import java.util.List;
 
 /**
  * TODO
- * @author 
+ * 
+ * @author
  *
  */
 public abstract class InvertedIndexBuilder { // TODO Should not be abstract!
@@ -52,16 +53,15 @@ public abstract class InvertedIndexBuilder { // TODO Should not be abstract!
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath ) throws IOException {
+	public static InvertedIndex build( Path inputPath, InvertedIndex index ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
-		InvertedIndex index = new InvertedIndex();
+
 		for ( Path file : files ) {
 			parseInput( file, index );
 		}
 		return index;
 
 	}
-	
-	// TODO public void build(Path inputPath, InvertedIndex index)
+
 }

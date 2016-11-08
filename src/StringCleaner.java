@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class StringCleaner { // TODO Not abstract!
+public class StringCleaner {
 
 	/**
 	 * Cleans up the string removing any non alphanumeric character
