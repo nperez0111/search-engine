@@ -6,33 +6,20 @@ public class Result implements Comparable<Result> {
 	private int count;
 	private int index;
 	private final String where;
-	
-	// TODO Remove?
-	private final String word;
 
 	// TODO Variable names
 	/**
 	 * TODO
+	 * 
 	 * @param word
 	 * @param where
 	 * @param c
 	 * @param i
 	 */
-	public Result( String word, String where, int c, int i ) {
-		this.word = word;
+	public Result( String where, int c, int i ) {
 		count = c;
 		index = i;
 		this.where = where;
-	}
-
-	/**
-	 * Returns the word stored in the result
-	 * 
-	 * @return word
-	 */
-	public String getWord() {
-
-		return word;
 	}
 
 	/**
@@ -119,7 +106,7 @@ public class Result implements Comparable<Result> {
 	@Override
 	public String toString() {
 
-		return word + ":" + where + ":" + count + ":" + index;
+		return where + ":" + count + ":" + index;
 
 	}
 }

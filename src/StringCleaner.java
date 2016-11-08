@@ -1,6 +1,5 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class StringCleaner { // TODO Not abstract!
@@ -20,12 +19,12 @@ public abstract class StringCleaner { // TODO Not abstract!
 	 * Cleans up a string and makes it lower case in order to normalize
 	 * comparison with other Strings
 	 * 
-	 * @param s
+	 * @param word
 	 * @return
 	 */
-	private static String normalize( String s ) { // TODO Avoid 1 letter variable names unless in a for loop
+	private static String normalize( String word ) {
 
-		return StringCleaner.stripNonAlphaNumeric( s ).toLowerCase();
+		return StringCleaner.stripNonAlphaNumeric( word ).toLowerCase();
 	}
 
 	/**
@@ -34,30 +33,19 @@ public abstract class StringCleaner { // TODO Not abstract!
 	 * @param list
 	 * @return sorted list of cleaned strings
 	 */
-	public static List<String> cleanAndSort( List<String> list ) { // TODO String[] words
+	public static String[] cleanAndSort( String[] words ) {
 
-		// TODO ret is not the best variable name
-		List<String> ret = new ArrayList<>();
+		List<String> cleanedWords = new ArrayList<>();
 
-		for ( String element : list ) {
+		for ( String element : words ) {
 			if ( element.equals( "" ) == false ) {
-				ret.add( StringCleaner.normalize( element ) );
+				cleanedWords.add( StringCleaner.normalize( element ) );
 			}
 		}
-		
-		// TODO Arrays.sort();
 
-		// TODO Remove comparator?
-		ret.sort( new Comparator<String>() {
+		Collections.sort( cleanedWords );
 
-			@Override
-			public int compare( String a, String b ) {
-
-				return a.compareTo( b );
-			}
-		} );
-
-		return ret;
+		return cleanedWords.toArray( new String[cleanedWords.size()] );
 
 	}
 
@@ -67,9 +55,9 @@ public abstract class StringCleaner { // TODO Not abstract!
 	 * @param s
 	 * @return
 	 */
-	public static List<String> cleanAndSort( String s ) {
+	public static String[] cleanAndSort( String s ) {
 
-		return cleanAndSort( new ArrayList<String>( Arrays.asList( StringCleaner.normalize( s ).split( "\\s+" ) ) ) );
+		return cleanAndSort( StringCleaner.normalize( s ).split( "\\s+" ) );
 	}
 
 }
