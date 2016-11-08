@@ -45,7 +45,7 @@ public class Result implements Comparable<Result> {
 	/**
 	 * Increments the amount of times a word has appeared in a file
 	 */
-	public void incCount( int c ) { // TODO addCount()
+	public void addCount( int c ) {
 
 		count += c;
 	}
@@ -65,9 +65,11 @@ public class Result implements Comparable<Result> {
 	 * 
 	 * @param i
 	 */
-	public void setIndex( int i ) { // TODO Only do this if less than
+	public void setIndex( int newIndex ) {
 
-		index = i;
+		if ( newIndex < index ) {
+			index = newIndex;
+		}
 	}
 
 	/**

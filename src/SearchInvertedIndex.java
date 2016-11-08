@@ -9,8 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-// TODO Not abstract
-public abstract class SearchInvertedIndex {
+public class SearchInvertedIndex {
 
 	/**
 	 * Performs a partial search into an inverted index provided, returns same

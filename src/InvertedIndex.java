@@ -79,13 +79,6 @@ public class InvertedIndex {
 
 	}
 
-	// TODO No Javadoc, Null pointer exception if word doesnt exist, breaks
-	// encapsulation! REMOVE
-	public Set<String> getFilesOfWord( String word ) {
-
-		return index.get( word ).keySet();
-	}
-
 	/**
 	 * Returns the number of words stored in the index.
 	 * 
@@ -205,7 +198,7 @@ public class InvertedIndex {
 
 		for ( Result r : lis ) {
 			if ( r.getWhere().equals( query ) ) {
-				r.incCount( count );
+				r.addCount( count );
 				if ( r.getIndex() > index ) {
 					r.setIndex( index );
 				}
