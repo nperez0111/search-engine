@@ -3,7 +3,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -13,10 +12,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private final Map<String, Map<String, Set<Integer>>> index; // TODO Don't
-																// upcast...
-																// there is a
-																// good reason!
+	private final TreeMap<String, TreeMap<String, Set<Integer>>> index;
 
 	/**
 	 * Initializes the index.

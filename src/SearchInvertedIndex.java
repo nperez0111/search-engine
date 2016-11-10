@@ -93,7 +93,9 @@ public class SearchInvertedIndex {
 			for ( List<Result> perQuery : results ) {
 				writer.write( "\t\"" + querys.get( c ).toString() + "\": [\n" );
 				for ( Result result : perQuery ) {
-					result.toJSON( writer );
+
+					JSONWriter.resultToJSON( writer, result.getWhere(), result.getCount(), result.getIndex() );
+
 					j++;
 					if ( perQuery.size() != j ) {
 						writer.write( ",\n" );

@@ -1,15 +1,11 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public class Result implements Comparable<Result> {
 
 	private int count;
 	private int index;
 	private final String where;
 
-	// TODO Variable names
 	/**
-	 * TODO
+	 * Stores a search result
 	 * 
 	 * @param word
 	 * @param where
@@ -86,20 +82,6 @@ public class Result implements Comparable<Result> {
 		}
 
 		return where.toLowerCase().compareTo( o.getWhere().toLowerCase() );
-	}
-
-	// TODO Maybe remove?
-	/**
-	 * Outputs a single result to the file
-	 * 
-	 * @param outputFile
-	 * @throws IOException
-	 */
-	public void toJSON( BufferedWriter writer ) throws IOException {
-
-		// System.out.println( where + ":" + count + ":" + index + "\n" );
-
-		JSONWriter.resultToJSON( writer, where, count, index );
 	}
 
 	/**

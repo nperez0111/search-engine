@@ -3,7 +3,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * TODO
+ * This is the driver class that calls all the other classes to build the
+ * inverted index and output it into file as well as search it
  * 
  * @author
  *

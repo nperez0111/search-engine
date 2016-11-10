@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO
+ * Builds the inverted index based off a file
  * 
  * @author
  *
  */
-public abstract class InvertedIndexBuilder { // TODO Should not be abstract!
+public class InvertedIndexBuilder {
 
 	/**
 	 * Take a file and put all the words into an index into the index
