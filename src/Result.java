@@ -1,28 +1,21 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public class Result implements Comparable<Result> {
 
 	private int count;
 	private int index;
 	private final String where;
-	private final String word;
 
-	public Result( String word, String where, int c, int i ) {
-		this.word = word;
+	/**
+	 * Stores a search result
+	 * 
+	 * @param word
+	 * @param where
+	 * @param c
+	 * @param i
+	 */
+	public Result( String where, int c, int i ) {
 		count = c;
 		index = i;
 		this.where = where;
-	}
-
-	/**
-	 * Returns the word stored in the result
-	 * 
-	 * @return word
-	 */
-	public String getWord() {
-
-		return word;
 	}
 
 	/**
@@ -48,7 +41,7 @@ public class Result implements Comparable<Result> {
 	/**
 	 * Increments the amount of times a word has appeared in a file
 	 */
-	public void incCount( int c ) {
+	public void addCount( int c ) {
 
 		count += c;
 	}
@@ -68,9 +61,11 @@ public class Result implements Comparable<Result> {
 	 * 
 	 * @param i
 	 */
-	public void setIndex( int i ) {
+	public void setIndex( int newIndex ) {
 
-		index = i;
+		if ( newIndex < index ) {
+			index = newIndex;
+		}
 	}
 
 	/**
@@ -90,25 +85,12 @@ public class Result implements Comparable<Result> {
 	}
 
 	/**
-	 * Outputs a single result to the file
-	 * 
-	 * @param outputFile
-	 * @throws IOException
-	 */
-	public void toJSON( BufferedWriter writer ) throws IOException {
-
-		// System.out.println( where + ":" + count + ":" + index + "\n" );
-
-		JSONWriter.resultToJSON( writer, where, count, index );
-	}
-
-	/**
 	 * just is a toString for debug purposes
 	 */
 	@Override
 	public String toString() {
 
-		return word + ":" + where + ":" + count + ":" + index;
+		return where + ":" + count + ":" + index;
 
 	}
 }

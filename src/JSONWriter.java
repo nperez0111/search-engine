@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Outputs certain Java objects to a file in a "pretty" JSON format using the
@@ -134,8 +135,8 @@ public class JSONWriter {
 	 * @param amountToTab
 	 * @throws IOException
 	 */
-	private static void pleaseJSON( Map<String, Map<String, Set<Integer>>> elements, Path output, int amountToTab )
-			throws IOException {
+	private static void pleaseJSON( TreeMap<String, TreeMap<String, Set<Integer>>> elements, Path output,
+			int amountToTab ) throws IOException {
 
 		try ( BufferedWriter writer = Files.newBufferedWriter( output, Charset.defaultCharset() ); ) {
 			writer.write( "{" + END );
@@ -162,7 +163,8 @@ public class JSONWriter {
 	 * @param output
 	 * @throws IOException
 	 */
-	public static void toJSON( Map<String, Map<String, Set<Integer>>> elements, Path output ) throws IOException {
+	public static void toJSON( TreeMap<String, TreeMap<String, Set<Integer>>> elements, Path output )
+			throws IOException {
 
 		int amountToTab = 1;
 

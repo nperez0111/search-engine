@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-public abstract class SearchInvertedIndex {
+public class SearchInvertedIndex {
 
 	/**
 	 * Performs a partial search into an inverted index provided, returns same
@@ -63,7 +63,7 @@ public abstract class SearchInvertedIndex {
 		List<List<Result>> results = new ArrayList<>();
 
 		for ( String query : queries ) {
-			results.add( index.search( query, partial ) );
+			results.add( index.search( StringCleaner.cleanAndSort( query ), partial ) );
 		}
 		if ( outputFile == null ) {
 			return index;
@@ -93,7 +93,9 @@ public abstract class SearchInvertedIndex {
 			for ( List<Result> perQuery : results ) {
 				writer.write( "\t\"" + querys.get( c ).toString() + "\": [\n" );
 				for ( Result result : perQuery ) {
-					result.toJSON( writer );
+
+					JSONWriter.resultToJSON( writer, result.getWhere(), result.getCount(), result.getIndex() );
+
 					j++;
 					if ( perQuery.size() != j ) {
 						writer.write( ",\n" );

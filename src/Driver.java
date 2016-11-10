@@ -2,6 +2,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * This is the driver class that calls all the other classes to build the
+ * inverted index and output it into file as well as search it
+ * 
+ * @author
+ *
+ */
 public class Driver {
 
 	private final static String DIR = "-dir";
@@ -10,27 +17,32 @@ public class Driver {
 	private final static String RESULTS = "-results";
 	private final static String EXACT = "-exact";
 
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
-		Path dir = getDir( parser, DIR );
-		InvertedIndex index;
-		if ( dir == null ) {
-			return;
-		}
+		InvertedIndex index = new InvertedIndex();
 		try {
+			if ( parser.hasFlag( DIR ) && parser.hasValue( DIR ) ) {
+				Path inputIndex = getValidDirectory( parser.getValue( DIR ) );
+				if ( inputIndex != null ) {
+					InvertedIndexBuilder.build( inputIndex, index );
+				}
+				Path outputIndex = getOutputFile( parser, INDEX, "index.json" );
 
-			index = InvertedIndexBuilder.build( dir );
-			Path outputFile = getOutputFile( parser, INDEX, "index.json" );
+				if ( outputIndex != null ) {
 
-			if ( outputFile != null ) {
+					index.toJSON( outputIndex );
 
-				index.toJSON( outputFile );
-
+				}
 			}
-			if ( parser.hasFlag( QUERY ) || parser.hasFlag( EXACT ) ) {
+
+			if ( parser.hasValue( QUERY ) || parser.hasValue( EXACT ) ) {
 				String flag = parser.hasFlag( QUERY ) ? QUERY : EXACT;
-				Path queryFile = getDir( parser, flag );
+				Path queryFile = getValidDirectory( parser.getValue( flag ) );
 				Path outputResult = getOutputFile( parser, RESULTS, "results.json" );
 
 				if ( queryFile == null ) {
@@ -46,26 +58,23 @@ public class Driver {
 				}
 			}
 		}
-		catch ( IOException e ) {
+		catch (
+
+		IOException e ) {
 			System.out.println( "File may be in use or not exist.." );
 			return;
 		}
 	}
 
 	/**
-	 * Gets the directory from the argument parser
-	 *
-	 * @param parser
-	 * @return a path or null if the directory is not found
+	 * gets a valid directory and outputs a message if it does not exist
+	 * 
+	 * @param path
+	 * @return
 	 */
-	private static Path getDir( ArgumentParser parser, String flag ) {
+	private static Path getValidDirectory( String path ) {
 
-		if ( !parser.hasFlag( flag ) || !parser.hasValue( flag ) ) {
-			System.out.println( "Sorry you must specify a directory..." );
-			return null;
-		}
-
-		Path dir = Paths.get( parser.getValue( flag ) );
+		Path dir = Paths.get( path );
 		if ( dir == null ) {
 			System.out.println( "The directory you specified does not exist..." );
 			return null;
