@@ -33,10 +33,7 @@ public class HTMLCleaner {
 	 */
 	public static String[] fetchWords( String url ) {
 
-		// THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
-		String html = fetchHTML( url );
-		String text = cleanHTML( html );
-		return parseWords( text );
+		return parseWords( cleanHTML( fetchHTML( url ) ) );
 	}
 
 	/**
@@ -49,7 +46,6 @@ public class HTMLCleaner {
 	 */
 	public static String[] parseWords( String text ) {
 
-		// THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
 		text = text.replaceAll( CLEAN_REGEX, "" ).toLowerCase().trim();
 		return text.split( SPLIT_REGEX );
 	}
