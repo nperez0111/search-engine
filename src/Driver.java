@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -16,6 +17,7 @@ public class Driver {
 	private final static String QUERY = "-query";
 	private final static String RESULTS = "-results";
 	private final static String EXACT = "-exact";
+	private final static String UrlFlag = "-url";
 
 	/**
 	 * First method to be called parses arguments and calls the correct methods
@@ -55,6 +57,11 @@ public class Driver {
 					System.out.println( "Outputting index to: " + outputIndex.toString() + " failed" );
 				}
 
+			}
+			if ( parser.hasValue( UrlFlag ) ) {
+				String url = parser.getValue( UrlFlag );
+				URL l = new URL( url );
+				URLQueue.addToQueue( l );
 			}
 		}
 		
