@@ -3,8 +3,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,8 +28,7 @@ public class InvertedIndexBuilder {
 			String fileName = input.toString();
 
 			while ( ( line = reader.readLine() ) != null ) {
-				List<String> list = new ArrayList<>(
-						Arrays.asList( StringCleaner.stripNonAlphaNumeric( line ).split( " " ) ) );
+				String[] list = StringCleaner.stripNonAlphaNumeric( line ).split( " " );
 				for ( String word : list ) {
 					if ( !word.trim().equals( "" ) ) {
 						index.add( word.trim(), fileName, count );
@@ -65,3 +62,4 @@ public class InvertedIndexBuilder {
 	}
 
 }
+
