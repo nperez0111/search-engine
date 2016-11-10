@@ -7,7 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class InvertedIndexBuilder {
+/**
+ * Builds the inverted index based off a file
+ * 
+ * @author
+ *
+ */
+public class InvertedIndexBuilder {
 
 	/**
 	 * Take a file and put all the words into an index into the index
@@ -47,14 +53,15 @@ public abstract class InvertedIndexBuilder {
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath ) throws IOException {
+	public static InvertedIndex build( Path inputPath, InvertedIndex index ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
-		InvertedIndex index = new InvertedIndex();
+
 		for ( Path file : files ) {
 			parseInput( file, index );
 		}
 		return index;
 
 	}
+
 }

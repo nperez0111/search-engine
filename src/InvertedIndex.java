@@ -3,7 +3,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -13,7 +12,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private final Map<String, Map<String, Set<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, Set<Integer>>> index;
 
 	/**
 	 * Initializes the index.
@@ -76,11 +75,6 @@ public class InvertedIndex {
 
 	}
 
-	public Set<String> getFilesOfWord( String word ) {
-
-		return index.get( word ).keySet();
-	}
-
 	/**
 	 * Returns the number of words stored in the index.
 	 * 
@@ -105,39 +99,13 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * returns all words that partially or exactly match the given string
-	 * 
-	 * @param word
-	 * @param partial
-	 * @return
-	 */
-	private List<String> wordsThatMatch( String word, boolean partial ) {
-
-		List<String> list = new ArrayList<>();
-		for ( String s : getWords() ) {
-			if ( partial ) {
-				if ( !s.startsWith( word ) ) {
-					continue;
-				}
-			}
-			else {
-				if ( !s.equals( word ) ) {
-					continue;
-				}
-			}
-			list.add( s );
-		}
-		return list;
-	}
-
-	/**
 	 * returns all the words that match a list of words partially or exactly
 	 * 
 	 * @param words
 	 * @param partial
 	 * @return
 	 */
-	private List<String> wordsThatMatch( List<String> words, boolean partial ) {
+	private List<String> wordsThatMatch( String[] words, boolean partial ) {
 
 		List<String> list = new ArrayList<>();
 
@@ -202,7 +170,7 @@ public class InvertedIndex {
 	 * @param word
 	 * @return
 	 */
-	private boolean startsWithAnyWord( List<String> queries, String word ) {
+	private boolean startsWithAnyWord( String[] queries, String word ) {
 
 		for ( String query : queries ) {
 			if ( word.startsWith( query ) ) {
@@ -226,7 +194,7 @@ public class InvertedIndex {
 
 		for ( Result r : lis ) {
 			if ( r.getWhere().equals( query ) ) {
-				r.incCount( count );
+				r.addCount( count );
 				if ( r.getIndex() > index ) {
 					r.setIndex( index );
 				}
@@ -244,10 +212,9 @@ public class InvertedIndex {
 	 * @param partial
 	 * @return
 	 */
-	public List<Result> search( String query, boolean partial ) {
+	public List<Result> search( String[] queries, boolean partial ) {
 
-		List<String> queries = StringCleaner.cleanAndSort( query );
-		String cleanedQuery = String.join( " ", queries );
+		// String[] queries = StringCleaner.cleanAndSort( query );
 		List<Result> results = new ArrayList<>();
 		List<String> words = wordsThatMatch( queries, partial );
 		for ( String word : words ) {
@@ -259,7 +226,7 @@ public class InvertedIndex {
 
 				if ( !wordIsInList( file, results, index, count ) ) {
 
-					results.add( new Result( cleanedQuery, file, count, index ) );
+					results.add( new Result( file, count, index ) );
 
 				}
 			}
