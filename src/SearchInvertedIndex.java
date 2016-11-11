@@ -9,7 +9,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+// TODO First hybrid class that does stuff and stores stuff
+
 public class SearchInvertedIndex {
+	
+	/* TODO
+	private final TreeMap<String, List<Result>> results;
+	private final InvertedIndex index;
+	
+	public SearchInvertedIndex(InvertedIndex index) {
+		
+	}
+	*/
 
 	/**
 	 * Performs a partial search into an inverted index provided, returns same
@@ -85,6 +96,7 @@ public class SearchInvertedIndex {
 	private static void outputToFile( Path outputFile, List<List<Result>> results, TreeSet<String> queries )
 			throws IOException {
 
+		// TODO UTF8
 		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.defaultCharset() ); ) {
 			int c = 0;
 			int j = 0;

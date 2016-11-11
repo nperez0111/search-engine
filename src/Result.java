@@ -12,7 +12,7 @@ public class Result implements Comparable<Result> {
 	 * @param c
 	 * @param i
 	 */
-	public Result( String where, int c, int i ) {
+	public Result( String where, int c, int i ) { // TODO Better parameter names
 		count = c;
 		index = i;
 		this.where = where;
