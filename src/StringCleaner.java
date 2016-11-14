@@ -34,7 +34,8 @@ public class StringCleaner {
 	 * @return sorted list of cleaned strings
 	 */
 	public static String[] cleanAndSort( String[] words ) {
-
+		// TODO There is an Arrays.sort()
+		
 		List<String> cleanedWords = new ArrayList<>();
 
 		for ( String element : words ) {

@@ -18,6 +18,8 @@ public class Driver {
 	private final static String EXACT = "-exact";
 
 	/**
+	 * First method to be called parses arguments and calls the correct methods
+	 * with the arguments passed in
 	 * 
 	 * @param args
 	 */
@@ -25,45 +27,78 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser( args );
 		InvertedIndex index = new InvertedIndex();
-		try {
-			if ( parser.hasFlag( DIR ) && parser.hasValue( DIR ) ) {
-				Path inputIndex = getValidDirectory( parser.getValue( DIR ) );
-				if ( inputIndex != null ) {
+
+		if ( parser.hasValue( DIR ) ) {
+			Path inputIndex = getValidDirectory( parser.getValue( DIR ) );
+			if ( inputIndex != null ) {
+				try {
 					InvertedIndexBuilder.build( inputIndex, index );
 				}
-				Path outputIndex = getOutputFile( parser, INDEX, "index.json" );
+				catch ( IOException e ) {
+					System.out.println( "Directory " + inputIndex.toString() + ", Not Found or Non-Existant" );
+				}
+			}
+		}
+		if ( parser.hasFlag( INDEX ) ) {
+			Path outputIndex = parser.getPath( INDEX, "index.json" );
 
-				if ( outputIndex != null ) {
-
+			if ( outputIndex == null ) {
+				System.out.println( "outputfile is not available" );
+			}
+			else {
+				try {
 					index.toJSON( outputIndex );
-
 				}
-			}
-
-			if ( parser.hasValue( QUERY ) || parser.hasValue( EXACT ) ) {
-				String flag = parser.hasFlag( QUERY ) ? QUERY : EXACT;
-				Path queryFile = getValidDirectory( parser.getValue( flag ) );
-				Path outputResult = getOutputFile( parser, RESULTS, "results.json" );
-
-				if ( queryFile == null ) {
-					return;
+				catch ( IOException e ) {
+					System.out.println( "Outputting index to: " + outputIndex.toString() + " failed" );
 				}
 
-				if ( parser.hasFlag( QUERY ) ) {
-
-					SearchInvertedIndex.partial( queryFile, outputResult, index );
-				}
-				else if ( parser.hasFlag( EXACT ) ) {
-					SearchInvertedIndex.exact( queryFile, outputResult, index );
-				}
 			}
 		}
-		catch (
+		if ( parser.hasValue( EXACT ) ) {
+			Path queryFile = parser.getPath( EXACT );
+			Path outputResult = parser.getPath( RESULTS, "results.json" );
 
-		IOException e ) {
-			System.out.println( "File may be in use or not exist.." );
-			return;
+			if ( queryFile == null ) {
+				System.out.println( "Query file is not an actual path." );
+				return;
+			}
+			try {
+				SearchInvertedIndex.exact( queryFile, outputResult, index );
+			}
+			catch ( IOException e ) {
+				System.out.println( "Exact Searching Inverted Index Failed" );
+			}
 		}
+
+		if ( parser.hasValue( QUERY ) ) {
+			Path queryFile = parser.getPath( QUERY );
+			Path outputResult = parser.getPath( RESULTS, "results.json" );
+
+			if ( queryFile == null ) {
+				System.out.println( "Query file is not an actual path." );
+				return;
+			}
+			try {
+				SearchInvertedIndex.partial( queryFile, outputResult, index );
+			}
+			catch ( IOException e ) {
+				System.out.println( "Partial Searching Inverted Index Failed" );
+			}
+		}
+
+		/*
+		 * TODO if (dir flag) build stuff
+		 * 
+		 * if index flag write index
+		 * 
+		 * if exact flag search
+		 * 
+		 * if query flag search
+		 * 
+		 * if result flag write search
+		 */
+
 	}
 
 	/**
@@ -76,21 +111,9 @@ public class Driver {
 
 		Path dir = Paths.get( path );
 		if ( dir == null ) {
-			System.out.println( "The directory you specified does not exist..." );
+			System.out.println( "The Directory: " + path + " you specified does not exist..." );
 			return null;
 		}
 		return dir.normalize();
-	}
-
-	/**
-	 * gets the output file from the argument parser or by default uses
-	 * index.json in the current directory
-	 *
-	 * @param parser
-	 * @return the path of the output file
-	 */
-	private static Path getOutputFile( ArgumentParser parser, String flag, String defaulter ) {
-
-		return Paths.get( parser.getValue( flag, defaulter ) );
 	}
 }

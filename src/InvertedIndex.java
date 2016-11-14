@@ -12,7 +12,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private final TreeMap<String, TreeMap<String, Set<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, Set<Integer>>> index; // TODO Don't upcast to Set here
 
 	/**
 	 * Initializes the index.
@@ -98,6 +98,7 @@ public class InvertedIndex {
 		return index.get( word ).get( file ).size();
 	}
 
+	// TODO Inefficient, can avoid making copies for this project
 	/**
 	 * returns all the words that match a list of words partially or exactly
 	 * 
@@ -149,6 +150,8 @@ public class InvertedIndex {
 
 	private int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
 
+		// TODO If you have a TreeSet, it is just set.first();
+		
 		Integer lowest = Integer.MAX_VALUE;
 
 		for ( Integer i : index.get( word ).get( file ) ) {
@@ -190,8 +193,8 @@ public class InvertedIndex {
 	 * @param count
 	 * @return
 	 */
-	private boolean wordIsInList( String query, List<Result> lis, int index, int count ) {
-
+	private boolean wordIsInList( String query, List<Result> lis, int index, int count ) { // TODO Parameter names are confusing query == location
+		// TODO We can avoid this linear search entirely
 		for ( Result r : lis ) {
 			if ( r.getWhere().equals( query ) ) {
 				r.addCount( count );
@@ -205,6 +208,7 @@ public class InvertedIndex {
 
 	}
 
+	// TODO Separate into exactSearch and partialSearch methods to start with
 	/**
 	 * actually performs the search of a string within the inverted index
 	 * 
@@ -236,6 +240,29 @@ public class InvertedIndex {
 		// System.out.println( results.toString() );
 		return results;
 
+		/*
+		 * TODO Exact Search logic
+		 * 
+		 * Map<String, Result> resultMap (String == file/location, Value == associated search result)
+		 * 
+		 * for every query word
+		 * 		if query word is a key in our map
+		 * 			for every file for that key/query
+		 * 				if file is in our result map
+		 * 					update our result
+		 * 				else
+		 * 					Result result = new Result(...)
+		 * 					results.add(result);
+		 * 					resultMap.put(file, result);
+		 * 
+		 * Collections.sort(results);
+		 * return results;
+		 * 
+		 * Partial Search Logic
+		 * 
+		 * We will have to loop through the key set to find keys that start with our query...
+		 * https://github.com/usf-cs212-2016/lectures/blob/master/Data%20Structures/src/FindDemo.java#L146
+		 */
 	}
 
 	/**
@@ -251,6 +278,11 @@ public class InvertedIndex {
 
 	}
 
+	/*
+	 * TODO
+	 * Should not ever class this for the projects, making an unnecessary copy
+	 * (space and time inefficient)
+	 */
 	/**
 	 * Returns a copy of the words in this index as a sorted list.
 	 * 
