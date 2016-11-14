@@ -1,3 +1,5 @@
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -188,6 +190,30 @@ public class ArgumentParser {
 		catch ( NumberFormatException e ) {
 			return defaultValue;
 		}
+	}
+
+	/**
+	 * Returns the path of a flag or null if it not a flag
+	 * 
+	 * @param flag
+	 * @param defaultValue
+	 * @return Path
+	 */
+	public Path getPath( String flag, String defaultValue ) {
+
+		return Paths.get( getValue( flag, defaultValue ) );
+	}
+
+	/**
+	 * Returns the path of a flag or null if it not a flag
+	 * 
+	 * @param flag
+	 * @param defaultValue
+	 * @return Path
+	 */
+	public Path getPath( String flag ) {
+
+		return Paths.get( getValue( flag ) );
 	}
 
 	@Override

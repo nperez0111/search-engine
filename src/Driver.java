@@ -40,10 +40,12 @@ public class Driver {
 			}
 		}
 		if ( parser.hasFlag( INDEX ) ) {
-			Path outputIndex = getOutputFile( parser, INDEX, "index.json" );
+			Path outputIndex = parser.getPath( INDEX, "index.json" );
 
-			if ( outputIndex != null ) {
-
+			if ( outputIndex == null ) {
+				System.out.println( "outputfile is not available" );
+			}
+			else {
 				try {
 					index.toJSON( outputIndex );
 				}
@@ -54,10 +56,11 @@ public class Driver {
 			}
 		}
 		if ( parser.hasValue( EXACT ) ) {
-			Path queryFile = getValidDirectory( parser.getValue( EXACT ) );
-			Path outputResult = Paths.get( parser.getValue( RESULTS, "results.json" ) );
+			Path queryFile = parser.getPath( EXACT );
+			Path outputResult = parser.getPath( RESULTS, "results.json" );
 
 			if ( queryFile == null ) {
+				System.out.println( "Query file is not an actual path." );
 				return;
 			}
 			try {
@@ -67,11 +70,13 @@ public class Driver {
 				System.out.println( "Exact Searching Inverted Index Failed" );
 			}
 		}
+
 		if ( parser.hasValue( QUERY ) ) {
-			Path queryFile = getValidDirectory( parser.getValue( QUERY ) );
-			Path outputResult = Paths.get( parser.getValue( RESULTS, "results.json" ) );
+			Path queryFile = parser.getPath( QUERY );
+			Path outputResult = parser.getPath( RESULTS, "results.json" );
 
 			if ( queryFile == null ) {
+				System.out.println( "Query file is not an actual path." );
 				return;
 			}
 			try {
@@ -106,25 +111,9 @@ public class Driver {
 
 		Path dir = Paths.get( path );
 		if ( dir == null ) {
-			System.out.println( "The directory you specified does not exist..." );
+			System.out.println( "The Directory: " + path + " you specified does not exist..." );
 			return null;
 		}
 		return dir.normalize();
-	}
-
-	// TODO Since this is private, you aren't really getting anything from this
-	// one-line method
-	/**
-	 * gets the output file from the argument parser or by default uses
-	 * index.json in the current directory
-	 *
-	 * @param parser
-	 * @return the path of the output file
-	 */
-	private static Path getOutputFile( ArgumentParser parser, String flag, String defaulter ) {
-
-		// TODO If you really want it as a path, add a getPath(String flag,
-		// String default)
-		return Paths.get( parser.getValue( flag, defaulter ) );
 	}
 }
