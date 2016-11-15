@@ -104,7 +104,15 @@ public class InvertedIndex {
 		return index.get( word ).get( file ).size();
 	}
 
-	private int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
+	/**
+	 * Gets the first index of a word within a file
+	 * 
+	 * @param word
+	 * @param file
+	 * @param partial
+	 * @return
+	 */
+	private int getFirstOccurenceInAFile( String word, String file ) {
 
 		return index.get( word ).get( file ).first();
 
@@ -125,7 +133,7 @@ public class InvertedIndex {
 			if ( index.containsKey( query ) ) {
 				for ( String file : index.get( query ).keySet() ) {
 
-					int index = getFirstOccurenceInAFile( query, file, true );
+					int index = getFirstOccurenceInAFile( query, file );
 					int count = frequencyInFile( query, file );
 
 					if ( resultMap.containsKey( file ) ) {
@@ -162,7 +170,7 @@ public class InvertedIndex {
 				}
 				for ( String file : index.get( match ).keySet() ) {
 
-					int index = getFirstOccurenceInAFile( match, file, true );
+					int index = getFirstOccurenceInAFile( match, file );
 					int count = frequencyInFile( match, file );
 
 					if ( resultMap.containsKey( file ) ) {
@@ -206,20 +214,6 @@ public class InvertedIndex {
 
 		return index.containsKey( word );
 
-	}
-
-	/*
-	 * TODO Should not ever class this for the projects, making an unnecessary
-	 * copy (space and time inefficient)
-	 */
-	/**
-	 * Returns a copy of the words in this index as a sorted list.
-	 * 
-	 * @return sorted list of words
-	 */
-	public List<String> getWords() {
-
-		return new ArrayList<String>( index.keySet() );
 	}
 
 	/**
