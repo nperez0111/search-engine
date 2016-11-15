@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Outputs certain Java objects to a file in a "pretty" JSON format using the
@@ -103,20 +104,20 @@ public class JSONWriter {
 	 * Writes an object with an inner array to file
 	 * 
 	 * @param writer
-	 * @param elements
+	 * @param treeMap
 	 * @param amountToTab
 	 * @throws IOException
 	 */
-	private static void makeObjectWithArray( BufferedWriter writer, Map<String, Set<Integer>> elements,
+	private static void makeObjectWithArray( BufferedWriter writer, TreeMap<String, TreeSet<Integer>> treeMap,
 			int amountToTab ) throws IOException {
 
 		writer.write( "{" + END );
-		int c = elements.keySet().size();
+		int c = treeMap.keySet().size();
 
-		for ( String s : elements.keySet() ) {
+		for ( String s : treeMap.keySet() ) {
 
 			writer.write( tab( amountToTab ) + quote( s ) + ": " );
-			JSONWriter.makeArray( writer, elements.get( s ), amountToTab + 1 );
+			JSONWriter.makeArray( writer, treeMap.get( s ), amountToTab + 1 );
 			writer.write( c > 1 ? "," : "" );
 			writer.write( END );
 			c--;
@@ -135,7 +136,7 @@ public class JSONWriter {
 	 * @param amountToTab
 	 * @throws IOException
 	 */
-	private static void pleaseJSON( TreeMap<String, TreeMap<String, Set<Integer>>> elements, Path output,
+	private static void pleaseJSON( TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path output,
 			int amountToTab ) throws IOException {
 
 		try ( BufferedWriter writer = Files.newBufferedWriter( output, Charset.defaultCharset() ); ) {
@@ -163,7 +164,7 @@ public class JSONWriter {
 	 * @param output
 	 * @throws IOException
 	 */
-	public static void toJSON( TreeMap<String, TreeMap<String, Set<Integer>>> elements, Path output )
+	public static void toJSON( TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path output )
 			throws IOException {
 
 		int amountToTab = 1;

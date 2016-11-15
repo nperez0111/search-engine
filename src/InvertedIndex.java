@@ -2,8 +2,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -12,7 +13,12 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private final TreeMap<String, TreeMap<String, Set<Integer>>> index; // TODO Don't upcast to Set here
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index; // TODO
+	// Don't
+	// upcast
+	// to
+	// Set
+	// here
 
 	/**
 	 * Initializes the index.
@@ -98,117 +104,85 @@ public class InvertedIndex {
 		return index.get( word ).get( file ).size();
 	}
 
-	// TODO Inefficient, can avoid making copies for this project
+	private int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
+
+		return index.get( word ).get( file ).first();
+
+	}
+
 	/**
-	 * returns all the words that match a list of words partially or exactly
+	 * performs an exact search on the inverted index and returns a list for
+	 * results
 	 * 
-	 * @param words
-	 * @param partial
-	 * @return
+	 * @param queries
+	 * @return List of Results
 	 */
-	private List<String> wordsThatMatch( String[] words, boolean partial ) {
+	public List<Result> exactSearch( String[] queries ) {
 
-		List<String> list = new ArrayList<>();
+		List<Result> results = new ArrayList<>();
+		Map<String, Result> resultMap = new HashMap<>();
+		for ( String query : queries ) {
+			if ( index.containsKey( query ) ) {
+				for ( String file : index.get( query ).keySet() ) {
 
-		if ( partial ) {
-			for ( String s : getWords() ) {
+					int index = getFirstOccurenceInAFile( query, file, true );
+					int count = frequencyInFile( query, file );
 
-				if ( startsWithAnyWord( words, s ) ) {
-
-					list.add( s );
-
+					if ( resultMap.containsKey( file ) ) {
+						resultMap.get( file ).addCount( count );
+						resultMap.get( file ).setIndex( index );
+					}
+					else {
+						Result result = new Result( file, count, index );
+						results.add( result );
+						resultMap.put( file, result );
+					}
 				}
-
 			}
-
 		}
-		else {
+		Collections.sort( results );
+		return results;
 
-			for ( String word : words ) {
-
-				if ( index.containsKey( word ) ) {
-
-					list.add( word );
-
-				}
-
-			}
-
-		}
-		return list;
 	}
 
 	/*
-	 * public int getFirstOccurenceInAnyFile( List<String> words ) {
-	 * 
-	 * Integer lowest = Integer.MAX_VALUE; for ( String s : words ) { for (
-	 * Set<Integer> set : index.get( s ).values() ) { for ( Integer i : set ) {
-	 * if ( lowest.intValue() > i.intValue() ) { lowest = i; } } } }
-	 * 
-	 * return lowest; }
+	 * Performs a partial search based upon the queries parsed
 	 */
+	public List<Result> partialSearch( String[] queries ) {
 
-	private int getFirstOccurenceInAFile( String word, String file, boolean partial ) {
+		List<Result> results = new ArrayList<>();
+		Map<String, Result> resultMap = new HashMap<>();
 
-		// TODO If you have a TreeSet, it is just set.first();
-		
-		Integer lowest = Integer.MAX_VALUE;
+		for ( String word : queries ) {
+			TreeSet<String> indexers = new TreeSet<>( index.keySet() );
+			for ( String match : indexers.tailSet( word ) ) {
 
-		for ( Integer i : index.get( word ).get( file ) ) {
-
-			if ( lowest.intValue() > i.intValue() ) {
-				lowest = i;
-			}
-
-		}
-
-		return lowest;
-
-	}
-
-	/**
-	 * returns true if the word matches any of the words in the list
-	 * 
-	 * @param queries
-	 * @param word
-	 * @return
-	 */
-	private boolean startsWithAnyWord( String[] queries, String word ) {
-
-		for ( String query : queries ) {
-			if ( word.startsWith( query ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * returns true if the word being looked up is in the list if it is then
-	 * mutate the result to update to the best value
-	 * 
-	 * @param query
-	 * @param lis
-	 * @param index
-	 * @param count
-	 * @return
-	 */
-	private boolean wordIsInList( String query, List<Result> lis, int index, int count ) { // TODO Parameter names are confusing query == location
-		// TODO We can avoid this linear search entirely
-		for ( Result r : lis ) {
-			if ( r.getWhere().equals( query ) ) {
-				r.addCount( count );
-				if ( r.getIndex() > index ) {
-					r.setIndex( index );
+				if ( !match.startsWith( word ) ) {
+					break;
 				}
-				return true;
+				for ( String file : index.get( match ).keySet() ) {
+
+					int index = getFirstOccurenceInAFile( match, file, true );
+					int count = frequencyInFile( match, file );
+
+					if ( resultMap.containsKey( file ) ) {
+						resultMap.get( file ).addCount( count );
+						resultMap.get( file ).setIndex( index );
+					}
+					else {
+						Result result = new Result( file, count, index );
+						results.add( result );
+						resultMap.put( file, result );
+					}
+				}
+
 			}
 		}
-		return false;
 
+		Collections.sort( results );
+		return results;
 	}
 
-	// TODO Separate into exactSearch and partialSearch methods to start with
 	/**
 	 * actually performs the search of a string within the inverted index
 	 * 
@@ -218,51 +192,7 @@ public class InvertedIndex {
 	 */
 	public List<Result> search( String[] queries, boolean partial ) {
 
-		// String[] queries = StringCleaner.cleanAndSort( query );
-		List<Result> results = new ArrayList<>();
-		List<String> words = wordsThatMatch( queries, partial );
-		for ( String word : words ) {
-
-			for ( String file : index.get( word ).keySet() ) {
-
-				int index = getFirstOccurenceInAFile( word, file, partial );
-				int count = frequencyInFile( word, file );
-
-				if ( !wordIsInList( file, results, index, count ) ) {
-
-					results.add( new Result( file, count, index ) );
-
-				}
-			}
-		}
-		// System.out.println( results.toString() );
-		Collections.sort( results );
-		// System.out.println( results.toString() );
-		return results;
-
-		/*
-		 * TODO Exact Search logic
-		 * 
-		 * Map<String, Result> resultMap (String == file/location, Value == associated search result)
-		 * 
-		 * for every query word
-		 * 		if query word is a key in our map
-		 * 			for every file for that key/query
-		 * 				if file is in our result map
-		 * 					update our result
-		 * 				else
-		 * 					Result result = new Result(...)
-		 * 					results.add(result);
-		 * 					resultMap.put(file, result);
-		 * 
-		 * Collections.sort(results);
-		 * return results;
-		 * 
-		 * Partial Search Logic
-		 * 
-		 * We will have to loop through the key set to find keys that start with our query...
-		 * https://github.com/usf-cs212-2016/lectures/blob/master/Data%20Structures/src/FindDemo.java#L146
-		 */
+		return partial ? partialSearch( queries ) : exactSearch( queries );
 	}
 
 	/**
@@ -279,9 +209,8 @@ public class InvertedIndex {
 	}
 
 	/*
-	 * TODO
-	 * Should not ever class this for the projects, making an unnecessary copy
-	 * (space and time inefficient)
+	 * TODO Should not ever class this for the projects, making an unnecessary
+	 * copy (space and time inefficient)
 	 */
 	/**
 	 * Returns a copy of the words in this index as a sorted list.
