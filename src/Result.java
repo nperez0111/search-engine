@@ -12,9 +12,9 @@ public class Result implements Comparable<Result> {
 	 * @param c
 	 * @param i
 	 */
-	public Result( String where, int c, int i ) { // TODO Better parameter names
-		count = c;
-		index = i;
+	public Result( String where, int count, int index ) {
+		this.count = count;
+		this.index = index;
 		this.where = where;
 	}
 
@@ -41,9 +41,9 @@ public class Result implements Comparable<Result> {
 	/**
 	 * Increments the amount of times a word has appeared in a file
 	 */
-	public void addCount( int c ) {
+	public void addCount( int amountToAddBy ) {
 
-		count += c;
+		count += amountToAddBy;
 	}
 
 	/**

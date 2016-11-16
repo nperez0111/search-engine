@@ -6,7 +6,7 @@ import java.nio.file.Paths;
  * This is the driver class that calls all the other classes to build the
  * inverted index and output it into file as well as search it
  * 
- * @author
+ * @author Nick The Sick
  *
  */
 public class Driver {
@@ -27,6 +27,7 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser( args );
 		InvertedIndex index = new InvertedIndex();
+		SearchInvertedIndex search = new SearchInvertedIndex( index );
 
 		if ( parser.hasValue( DIR ) ) {
 			Path inputIndex = getValidDirectory( parser.getValue( DIR ) );
@@ -57,14 +58,13 @@ public class Driver {
 		}
 		if ( parser.hasValue( EXACT ) ) {
 			Path queryFile = parser.getPath( EXACT );
-			Path outputResult = parser.getPath( RESULTS, "results.json" );
 
 			if ( queryFile == null ) {
 				System.out.println( "Query file is not an actual path." );
 				return;
 			}
 			try {
-				SearchInvertedIndex.exact( queryFile, outputResult, index );
+				search.exact( queryFile );
 			}
 			catch ( IOException e ) {
 				System.out.println( "Exact Searching Inverted Index Failed" );
@@ -73,31 +73,28 @@ public class Driver {
 
 		if ( parser.hasValue( QUERY ) ) {
 			Path queryFile = parser.getPath( QUERY );
-			Path outputResult = parser.getPath( RESULTS, "results.json" );
 
 			if ( queryFile == null ) {
 				System.out.println( "Query file is not an actual path." );
 				return;
 			}
 			try {
-				SearchInvertedIndex.partial( queryFile, outputResult, index );
+				search.partial( queryFile );
 			}
 			catch ( IOException e ) {
 				System.out.println( "Partial Searching Inverted Index Failed" );
 			}
 		}
+		if ( parser.hasValue( RESULTS ) ) {
 
-		/*
-		 * TODO if (dir flag) build stuff
-		 * 
-		 * if index flag write index
-		 * 
-		 * if exact flag search
-		 * 
-		 * if query flag search
-		 * 
-		 * if result flag write search
-		 */
+			Path outputResult = parser.getPath( RESULTS, "results.json" );
+			if ( outputResult == null ) {
+				System.out.println( "output file does not exist." );
+				return;
+			}
+			search.outputResults( outputResult );
+
+		}
 
 	}
 

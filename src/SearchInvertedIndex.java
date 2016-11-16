@@ -4,23 +4,21 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 // TODO First hybrid class that does stuff and stores stuff
 
 public class SearchInvertedIndex {
-	
-	/* TODO
+
 	private final TreeMap<String, List<Result>> results;
 	private final InvertedIndex index;
-	
-	public SearchInvertedIndex(InvertedIndex index) {
-		
+
+	public SearchInvertedIndex( InvertedIndex index ) {
+		this.index = index;
+		results = new TreeMap<>();
 	}
-	*/
 
 	/**
 	 * Performs a partial search into an inverted index provided, returns same
@@ -32,9 +30,9 @@ public class SearchInvertedIndex {
 	 * @return
 	 * @throws IOException
 	 */
-	public static InvertedIndex partial( Path inputFile, Path outputFile, InvertedIndex index ) throws IOException {
+	public void partial( Path inputFile ) throws IOException {
 
-		return SearchInvertedIndex.search( inputFile, outputFile, index, true );
+		search( inputFile, true );
 
 	}
 
@@ -48,9 +46,9 @@ public class SearchInvertedIndex {
 	 * @return
 	 * @throws IOException
 	 */
-	public static InvertedIndex exact( Path inputFile, Path outputFile, InvertedIndex index ) throws IOException {
+	public void exact( Path inputFile ) throws IOException {
 
-		return SearchInvertedIndex.search( inputFile, outputFile, index, false );
+		search( inputFile, false );
 
 	}
 
@@ -65,23 +63,14 @@ public class SearchInvertedIndex {
 	 * @return
 	 * @throws IOException
 	 */
-	private static InvertedIndex search( Path inputFile, Path outputFile, InvertedIndex index, boolean partial )
-			throws IOException {
+	private void search( Path inputFile, boolean partial ) throws IOException {
 
 		TreeSet<String> queries = SearchInvertedIndex.getSearchQueries( inputFile );
-		// Collections.sort( queries );
-		// This stores the list of results returned per query
-		List<List<Result>> results = new ArrayList<>();
 
 		for ( String query : queries ) {
-			results.add( index.search( StringCleaner.cleanAndSort( query ), partial ) );
+			List<Result> result = index.search( StringCleaner.cleanAndSort( query ), partial );
+			results.put( query, result );
 		}
-		if ( outputFile == null ) {
-			return index;
-		}
-		outputToFile( outputFile, results, queries );
-
-		return null;
 
 	}
 
@@ -89,21 +78,20 @@ public class SearchInvertedIndex {
 	 * Outputs the results per query to the specified output file
 	 * 
 	 * @param outputFile
-	 * @param results
+	 * @param resultes
 	 * @param queries
 	 * @throws IOException
 	 */
-	private static void outputToFile( Path outputFile, List<List<Result>> results, TreeSet<String> queries )
-			throws IOException {
+	public void outputResults( Path outputFile ) {
 
-		// TODO UTF8
-		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.defaultCharset() ); ) {
+		try ( BufferedWriter writer = Files.newBufferedWriter( outputFile, Charset.forName( "UTF-8" ) ); ) {
 			int c = 0;
 			int j = 0;
-			List<Object> querys = Arrays.asList( queries.toArray() );
 			writer.write( "{\n" );
-			for ( List<Result> perQuery : results ) {
-				writer.write( "\t\"" + querys.get( c ).toString() + "\": [\n" );
+			for ( String query : results.keySet() ) {
+				writer.write( "\t\"" + query + "\": [\n" );
+
+				List<Result> perQuery = results.get( query );
 				for ( Result result : perQuery ) {
 
 					JSONWriter.resultToJSON( writer, result.getWhere(), result.getCount(), result.getIndex() );
@@ -122,11 +110,15 @@ public class SearchInvertedIndex {
 			}
 			writer.write( "}\n" );
 		}
+		catch ( IOException e ) {
+			System.out.println( "Error outputing results to File." );
+		}
 
 	}
 
 	/**
-	 * returns all the normalized search queries within a file with no repitions
+	 * returns all the normalized search queries within a file with no
+	 * repetitions
 	 * 
 	 * @param inputFile
 	 * @return

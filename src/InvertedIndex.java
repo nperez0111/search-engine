@@ -13,12 +13,7 @@ public class InvertedIndex {
 	/**
 	 * Stores a mapping of words to the positions the words were found.
 	 */
-	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index; // TODO
-	// Don't
-	// upcast
-	// to
-	// Set
-	// here
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 
 	/**
 	 * Initializes the index.
