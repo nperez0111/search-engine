@@ -85,7 +85,7 @@ public class Driver {
 				System.out.println( "Partial Searching Inverted Index Failed" );
 			}
 		}
-		if ( parser.hasValue( RESULTS ) ) {
+		if ( parser.hasFlag( RESULTS ) ) {
 
 			Path outputResult = parser.getPath( RESULTS, "results.json" );
 			if ( outputResult == null ) {

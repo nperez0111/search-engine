@@ -1,7 +1,11 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
+/**
+ * Provides methods to clean strings used throughout
+ * 
+ * @author nickthesick
+ *
+ */
 public class StringCleaner {
 
 	/**
@@ -34,19 +38,16 @@ public class StringCleaner {
 	 * @return sorted list of cleaned strings
 	 */
 	public static String[] cleanAndSort( String[] words ) {
-		// TODO There is an Arrays.sort()
-		
-		List<String> cleanedWords = new ArrayList<>();
 
-		for ( String element : words ) {
-			if ( element.equals( "" ) == false ) {
-				cleanedWords.add( StringCleaner.normalize( element ) );
-			}
+		String[] cleanedWords = new String[words.length];
+
+		for ( int i = 0; i < words.length; i++ ) {
+			cleanedWords[i] = StringCleaner.normalize( words[i] );
 		}
 
-		Collections.sort( cleanedWords );
+		Arrays.sort( cleanedWords );
 
-		return cleanedWords.toArray( new String[cleanedWords.size()] );
+		return cleanedWords;
 
 	}
 

@@ -8,13 +8,24 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-// TODO First hybrid class that does stuff and stores stuff
-
+/**
+ * Searches an inverted index and stores the results within the results treemap
+ * to then be outputted when output to result is called
+ * 
+ * @author nickthesick
+ *
+ */
 public class SearchInvertedIndex {
 
 	private final TreeMap<String, List<Result>> results;
 	private final InvertedIndex index;
 
+	/**
+	 * Searches an invertedindex provided to then output the result in a proper
+	 * json format
+	 * 
+	 * @param index
+	 */
 	public SearchInvertedIndex( InvertedIndex index ) {
 		this.index = index;
 		results = new TreeMap<>();
