@@ -76,6 +76,7 @@ public class SearchInvertedIndex {
 	 */
 	private void search( Path inputFile, boolean partial ) throws IOException {
 
+		// TODO Looping through all the lines twice
 		TreeSet<String> queries = SearchInvertedIndex.getSearchQueries( inputFile );
 
 		for ( String query : queries ) {
@@ -135,12 +136,29 @@ public class SearchInvertedIndex {
 	 * @return
 	 * @throws IOException
 	 */
-	private static TreeSet<String> getSearchQueries( Path inputFile ) throws IOException {
+	private static TreeSet<String> getSearchQueries( Path inputFile ) throws IOException { // TODO Make this non-static
 
 		TreeSet<String> list = new TreeSet<>();
 		try ( BufferedReader reader = Files.newBufferedReader( inputFile, Charset.forName( "UTF8" ) ); ) {
 			String line = null;
 			while ( ( line = reader.readLine() ) != null ) {
+				
+				/*
+				 * TODO
+				 * Do the search here
+				 * 
+				 * String[] words = StringCleaner.cleanAndSort(line);
+				 * 
+				 * if (exact) {
+				 * 		results.put(String.join(" ", words), index.exact(words));
+				 * }
+				 * else {
+				 * 
+				 * }
+				 */
+				
+				
+				
 				list.add( String.join( " ", StringCleaner.cleanAndSort( line ) ) );
 			}
 		}

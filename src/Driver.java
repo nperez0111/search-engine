@@ -40,6 +40,7 @@ public class Driver {
 				}
 			}
 		}
+		
 		if ( parser.hasFlag( INDEX ) ) {
 			Path outputIndex = parser.getPath( INDEX, "index.json" );
 
@@ -56,6 +57,7 @@ public class Driver {
 
 			}
 		}
+		
 		if ( parser.hasValue( EXACT ) ) {
 			Path queryFile = parser.getPath( EXACT );
 
@@ -85,6 +87,7 @@ public class Driver {
 				System.out.println( "Partial Searching Inverted Index Failed" );
 			}
 		}
+		
 		if ( parser.hasFlag( RESULTS ) ) {
 
 			Path outputResult = parser.getPath( RESULTS, "results.json" );

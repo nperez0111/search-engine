@@ -124,6 +124,7 @@ public class InvertedIndex {
 
 		List<Result> results = new ArrayList<>();
 		Map<String, Result> resultMap = new HashMap<>();
+		
 		for ( String query : queries ) {
 			if ( index.containsKey( query ) ) {
 				for ( String file : index.get( query ).keySet() ) {
@@ -157,12 +158,16 @@ public class InvertedIndex {
 		Map<String, Result> resultMap = new HashMap<>();
 
 		for ( String word : queries ) {
+			// TODO This below is a copy
 			TreeSet<String> indexers = new TreeSet<>( index.keySet() );
 			for ( String match : indexers.tailSet( word ) ) {
+			//TODO for (String match : index.tailMap(word).keySet()) {
 
 				if ( !match.startsWith( word ) ) {
 					break;
 				}
+				
+				// TODO Make this for loop a private helper method called by each search
 				for ( String file : index.get( match ).keySet() ) {
 
 					int index = getFirstOccurenceInAFile( match, file );
