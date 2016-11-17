@@ -16,7 +16,7 @@ public class URLQueue {
 	 * @return false if queue is full true if the url is in the queue or added
 	 *         to the queue
 	 */
-	public static boolean addToQueue( URL url ) {
+	public static boolean add( URL url ) {
 
 		if ( urls.size() < SIZE ) {
 			for ( URL u : urls ) {
@@ -28,6 +28,23 @@ public class URLQueue {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Adds all of the Urls in a list to the URL queue and returns false if all
+	 * of them could not be added
+	 * 
+	 * @param urls
+	 * @return
+	 */
+	public static boolean addAll( List<URL> urls ) {
+
+		for ( URL url : urls ) {
+			if ( add( url ) == false ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

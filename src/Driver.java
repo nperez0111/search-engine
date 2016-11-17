@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,8 +61,15 @@ public class Driver {
 			}
 			if ( parser.hasValue( UrlFlag ) ) {
 				String url = parser.getValue( UrlFlag );
-				URL l = new URL( url );
-				URLQueue.addToQueue( l );
+				URL l = null;
+				try {
+					l = new URL( url );
+				}
+				catch ( MalformedURLException e ) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				URLQueue.add( l );
 			}
 		}
 		
