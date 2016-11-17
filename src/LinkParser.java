@@ -49,7 +49,7 @@ public class LinkParser {
 			// add the appropriate group from regular expression to list
 			links.add( m.group( GROUP ) );
 		}
-		System.out.println( links.toString() );
 		return links;
 	}
+
 }
