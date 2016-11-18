@@ -1,3 +1,4 @@
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,7 +44,7 @@ public class Driver {
 				}
 			}
 		}
-		
+
 		if ( parser.hasFlag( INDEX ) ) {
 			Path outputIndex = parser.getPath( INDEX, "index.json" );
 
@@ -72,7 +73,7 @@ public class Driver {
 				URLQueue.add( l );
 			}
 		}
-		
+
 		if ( parser.hasValue( EXACT ) ) {
 			Path queryFile = parser.getPath( EXACT );
 
@@ -101,8 +102,20 @@ public class Driver {
 			catch ( IOException e ) {
 				System.out.println( "Partial Searching Inverted Index Failed" );
 			}
+			if ( parser.hasValue( UrlFlag ) ) {
+				String url = parser.getValue( UrlFlag );
+				URL l = null;
+				try {
+					l = new URL( url );
+				}
+				catch ( MalformedURLException e ) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				URLQueue.add( l );
+			}
 		}
-		
+
 		if ( parser.hasFlag( RESULTS ) ) {
 
 			Path outputResult = parser.getPath( RESULTS, "results.json" );

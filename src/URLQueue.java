@@ -31,8 +31,8 @@ public class URLQueue {
 	}
 
 	/**
-	 * Adds all of the Urls in a list to the URL queue and returns false if all
-	 * of them could not be added
+	 * <<<<<<< HEAD Adds all of the Urls in a list to the URL queue and returns
+	 * false if all of them could not be added
 	 * 
 	 * @param urls
 	 * @return
@@ -48,7 +48,8 @@ public class URLQueue {
 	}
 
 	/**
-	 * returns the first element in the queue
+	 * ======= >>>>>>> e7cf70aa76b3da0948fad039145679b7d7fc2953 returns the
+	 * first element in the queue
 	 * 
 	 * @return url to parse
 	 */
