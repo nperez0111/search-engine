@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Searches an inverted index and stores the results within the results treemap
@@ -76,11 +75,14 @@ public class SearchInvertedIndex {
 	 */
 	private void search( Path inputFile, boolean partial ) throws IOException {
 
-		TreeSet<String> queries = SearchInvertedIndex.getSearchQueries( inputFile );
+		try ( BufferedReader reader = Files.newBufferedReader( inputFile, Charset.forName( "UTF8" ) ); ) {
+			String line = null;
+			while ( ( line = reader.readLine() ) != null ) {
 
-		for ( String query : queries ) {
-			List<Result> result = index.search( StringCleaner.cleanAndSort( query ), partial );
-			results.put( query, result );
+				String[] words = StringCleaner.cleanAndSort( line );
+				List<Result> result = index.search( words, partial );
+				results.put( String.join( " ", words ), result );
+			}
 		}
 
 	}
@@ -125,25 +127,5 @@ public class SearchInvertedIndex {
 			System.out.println( "Error outputing results to File." );
 		}
 
-	}
-
-	/**
-	 * returns all the normalized search queries within a file with no
-	 * repetitions
-	 * 
-	 * @param inputFile
-	 * @return
-	 * @throws IOException
-	 */
-	private static TreeSet<String> getSearchQueries( Path inputFile ) throws IOException {
-
-		TreeSet<String> list = new TreeSet<>();
-		try ( BufferedReader reader = Files.newBufferedReader( inputFile, Charset.forName( "UTF8" ) ); ) {
-			String line = null;
-			while ( ( line = reader.readLine() ) != null ) {
-				list.add( String.join( " ", StringCleaner.cleanAndSort( line ) ) );
-			}
-		}
-		return list;
 	}
 }
