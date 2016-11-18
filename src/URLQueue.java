@@ -91,15 +91,17 @@ public class URLQueue {
 	 */
 	private static String normalize( URL url ) {
 
-		return url.toString();
+		return url.getProtocol() + "://" + url.getHost() + url.getFile();
 	}
 
-	public static URL resolveAgainst( URL url ) {
+	public static URL resolveAgainst( String url ) {
 
 		try {
-			return urls.get( count ).toURI().resolve( url.toURI() ).toURL();
+			URL r = urls.get( count - 1 ).toURI().resolve( url ).toURL();
+			return r;
 		}
 		catch ( MalformedURLException | URISyntaxException e ) {
+			System.out.println( "didnt work" );
 			return null;
 		}
 	}

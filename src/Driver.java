@@ -60,6 +60,10 @@ public class Driver {
 				if ( popped != null ) {
 					LinkParser.search( popped, index );
 				}
+				else {
+					System.out.println( "ran out of elements to proccess" );
+					break;
+				}
 			}
 			while ( URLQueue.hasNext() );
 		}

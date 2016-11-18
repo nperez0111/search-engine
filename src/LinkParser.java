@@ -1,4 +1,3 @@
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -58,11 +57,9 @@ public class LinkParser {
 
 		ArrayList<URL> urls = new ArrayList<>();
 		for ( String link : listLinks( text ) ) {
-			try {
-				urls.add( new URL( link ) );
-			}
-			catch ( MalformedURLException e ) {
-				System.out.println( "URL Passed in is Invalid" );
+			URL url = URLQueue.resolveAgainst( link );
+			if ( url != null ) {
+				urls.add( url );
 			}
 		}
 		return urls;
