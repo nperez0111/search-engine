@@ -1,10 +1,13 @@
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class URLQueue {
 
 	private static final List<URL> urls = new ArrayList<>();
+	private static final Map<String, URL> map = new HashMap<>();
 	private static int count = 0;
 
 	public static final int SIZE = 50;
@@ -19,20 +22,17 @@ public class URLQueue {
 	public static boolean add( URL url ) {
 
 		if ( urls.size() < SIZE ) {
-			for ( URL u : urls ) {
-				if ( u.sameFile( url ) ) {
-					return true;
-				}
+			if ( !map.containsKey( normalize( url ) ) ) {
+				urls.add( url );
+				return true;
 			}
-			urls.add( url );
-			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * <<<<<<< HEAD Adds all of the Urls in a list to the URL queue and returns
-	 * false if all of them could not be added
+	 * Adds all of the Urls in a list to the URL queue and returns false if all
+	 * of them could not be added
 	 * 
 	 * @param urls
 	 * @return
@@ -47,9 +47,19 @@ public class URLQueue {
 		return true;
 	}
 
+	public static boolean hasNext() {
+
+		if ( SIZE == count ) {
+			return false;
+		}
+		if ( count + 1 == urls.size() ) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
-	 * ======= >>>>>>> e7cf70aa76b3da0948fad039145679b7d7fc2953 returns the
-	 * first element in the queue
+	 * returns the first element in the queue
 	 * 
 	 * @return url to parse
 	 */
@@ -69,6 +79,17 @@ public class URLQueue {
 
 		urls.clear();
 		count = 0;
+	}
+
+	/**
+	 * normalizes a URL to a consistent string representation
+	 * 
+	 * @param url
+	 * @return
+	 */
+	private static String normalize( URL url ) {
+
+		return url.toString();
 	}
 
 }
