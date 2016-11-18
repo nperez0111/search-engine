@@ -44,6 +44,25 @@ public class Driver {
 				}
 			}
 		}
+		if ( parser.hasValue( UrlFlag ) ) {
+			String url = parser.getValue( UrlFlag );
+			URL l = null;
+			try {
+				l = new URL( url );
+			}
+			catch ( MalformedURLException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			URLQueue.add( l );
+			do {
+				URL popped = URLQueue.popQueue();
+				if ( popped != null ) {
+					LinkParser.search( popped, index );
+				}
+			}
+			while ( URLQueue.hasNext() );
+		}
 
 		if ( parser.hasFlag( INDEX ) ) {
 			Path outputIndex = parser.getPath( INDEX, "index.json" );
@@ -101,18 +120,6 @@ public class Driver {
 			}
 			catch ( IOException e ) {
 				System.out.println( "Partial Searching Inverted Index Failed" );
-			}
-			if ( parser.hasValue( UrlFlag ) ) {
-				String url = parser.getValue( UrlFlag );
-				URL l = null;
-				try {
-					l = new URL( url );
-				}
-				catch ( MalformedURLException e ) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				URLQueue.add( l );
 			}
 		}
 

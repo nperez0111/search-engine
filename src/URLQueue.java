@@ -1,3 +1,5 @@
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ public class URLQueue {
 
 		if ( urls.size() < SIZE ) {
 			if ( !map.containsKey( normalize( url ) ) ) {
+				System.out.println( "put: " + normalize( url ) );
+				map.put( normalize( url ), url );
 				urls.add( url );
 				return true;
 			}
@@ -49,10 +53,7 @@ public class URLQueue {
 
 	public static boolean hasNext() {
 
-		if ( SIZE == count ) {
-			return false;
-		}
-		if ( count + 1 == urls.size() ) {
+		if ( SIZE == count || count == urls.size() ) {
 			return false;
 		}
 		return true;
@@ -65,8 +66,9 @@ public class URLQueue {
 	 */
 	public static URL popQueue() {
 
-		if ( count + 1 < SIZE ) {
+		if ( count != SIZE ) {
 			count++;
+			System.out.println( "pop(" + ( count - 1 ) + "): " + normalize( urls.get( count - 1 ) ) );
 			return urls.get( count - 1 );
 		}
 		return null;
@@ -90,6 +92,16 @@ public class URLQueue {
 	private static String normalize( URL url ) {
 
 		return url.toString();
+	}
+
+	public static URL resolveAgainst( URL url ) {
+
+		try {
+			return urls.get( count ).toURI().resolve( url.toURI() ).toURL();
+		}
+		catch ( MalformedURLException | URISyntaxException e ) {
+			return null;
+		}
 	}
 
 }

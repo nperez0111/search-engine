@@ -62,7 +62,7 @@ public class LinkParser {
 				urls.add( new URL( link ) );
 			}
 			catch ( MalformedURLException e ) {
-
+				System.out.println( "URL Passed in is Invalid" );
 			}
 		}
 		return urls;
@@ -70,9 +70,8 @@ public class LinkParser {
 
 	public static void search( URL seed, InvertedIndex index ) {
 
-		String html;
-		html = HTMLCleaner.fetchHTML( seed.toString() );
-		String[] words = HTMLCleaner.parseWords( html );
+		String html = HTMLCleaner.fetchHTML( seed.toString() );
+		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
 		ArrayList<URL> links = listURLs( html );
 
