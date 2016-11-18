@@ -1,3 +1,5 @@
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,6 +52,32 @@ public class LinkParser {
 			links.add( m.group( GROUP ) );
 		}
 		return links;
+	}
+
+	private static ArrayList<URL> listURLs( String text ) {
+
+		ArrayList<URL> urls = new ArrayList<>();
+		for ( String link : listLinks( text ) ) {
+			try {
+				urls.add( new URL( link ) );
+			}
+			catch ( MalformedURLException e ) {
+
+			}
+		}
+		return urls;
+	}
+
+	public static void search( URL seed, InvertedIndex index ) {
+
+		String html;
+		html = HTMLCleaner.fetchHTML( seed.toString() );
+		String[] words = HTMLCleaner.parseWords( html );
+		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
+		ArrayList<URL> links = listURLs( html );
+
+		URLQueue.addAll( links );
+
 	}
 
 }
