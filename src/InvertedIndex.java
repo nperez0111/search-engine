@@ -124,24 +124,10 @@ public class InvertedIndex {
 
 		List<Result> results = new ArrayList<>();
 		Map<String, Result> resultMap = new HashMap<>();
-		
+
 		for ( String query : queries ) {
 			if ( index.containsKey( query ) ) {
-				for ( String file : index.get( query ).keySet() ) {
-
-					int index = getFirstOccurenceInAFile( query, file );
-					int count = frequencyInFile( query, file );
-
-					if ( resultMap.containsKey( file ) ) {
-						resultMap.get( file ).addCount( count );
-						resultMap.get( file ).setIndex( index );
-					}
-					else {
-						Result result = new Result( file, count, index );
-						results.add( result );
-						resultMap.put( file, result );
-					}
-				}
+				searchSomething( query, query, resultMap, results );
 			}
 		}
 		Collections.sort( results );
@@ -158,37 +144,38 @@ public class InvertedIndex {
 		Map<String, Result> resultMap = new HashMap<>();
 
 		for ( String word : queries ) {
-			// TODO This below is a copy
-			TreeSet<String> indexers = new TreeSet<>( index.keySet() );
-			for ( String match : indexers.tailSet( word ) ) {
-			//TODO for (String match : index.tailMap(word).keySet()) {
+			for ( String match : index.tailMap( word ).keySet() ) {
 
 				if ( !match.startsWith( word ) ) {
 					break;
 				}
-				
-				// TODO Make this for loop a private helper method called by each search
-				for ( String file : index.get( match ).keySet() ) {
 
-					int index = getFirstOccurenceInAFile( match, file );
-					int count = frequencyInFile( match, file );
-
-					if ( resultMap.containsKey( file ) ) {
-						resultMap.get( file ).addCount( count );
-						resultMap.get( file ).setIndex( index );
-					}
-					else {
-						Result result = new Result( file, count, index );
-						results.add( result );
-						resultMap.put( file, result );
-					}
-				}
+				searchSomething( match, word, resultMap, results );
 
 			}
 		}
 
 		Collections.sort( results );
 		return results;
+	}
+
+	public void searchSomething( String match, String word, Map<String, Result> map, List<Result> results ) {
+
+		for ( String file : index.get( match ).keySet() ) {
+
+			int index = getFirstOccurenceInAFile( match, file );
+			int count = frequencyInFile( match, file );
+
+			if ( map.containsKey( file ) ) {
+				map.get( file ).addCount( count );
+				map.get( file ).setIndex( index );
+			}
+			else {
+				Result result = new Result( file, count, index );
+				results.add( result );
+				map.put( file, result );
+			}
+		}
 	}
 
 	/**
