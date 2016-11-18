@@ -28,16 +28,33 @@ public class InvertedIndexBuilder {
 			String fileName = input.toString();
 
 			while ( ( line = reader.readLine() ) != null ) {
-				String[] list = StringCleaner.stripNonAlphaNumeric( line ).split( "\\s+" );
-				for ( String word : list ) {
-					if ( !word.trim().equals( "" ) ) {
-						index.add( word.trim(), fileName, count );
-						count++;
-					}
-				}
+				count = parseLine( line, fileName, count, index );
 
 			}
 		}
+	}
+
+	public static int parseLine( String line, String fileName, int count, InvertedIndex index ) {
+
+		String[] list = StringCleaner.stripNonAlphaNumeric( line ).split( "\\s+" );
+		for ( String word : list ) {
+			if ( !word.trim().equals( "" ) ) {
+				index.add( word.trim(), fileName, count );
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public static int parseLine( String[] list, String fileName, int count, InvertedIndex index ) {
+
+		for ( String word : list ) {
+			if ( !word.trim().equals( "" ) ) {
+				index.add( word.trim(), fileName, count );
+				count++;
+			}
+		}
+		return count;
 	}
 
 	/**

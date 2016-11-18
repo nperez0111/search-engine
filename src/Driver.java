@@ -1,4 +1,7 @@
+
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -16,6 +19,7 @@ public class Driver {
 	private final static String QUERY = "-query";
 	private final static String RESULTS = "-results";
 	private final static String EXACT = "-exact";
+	private final static String UrlFlag = "-url";
 
 	/**
 	 * First method to be called parses arguments and calls the correct methods
@@ -40,7 +44,30 @@ public class Driver {
 				}
 			}
 		}
-		
+		if ( parser.hasValue( UrlFlag ) ) {
+			String url = parser.getValue( UrlFlag );
+			URL l = null;
+			try {
+				l = new URL( url );
+			}
+			catch ( MalformedURLException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			URLQueue.add( l );
+			do {
+				URL popped = URLQueue.popQueue();
+				if ( popped != null ) {
+					LinkParser.search( popped, index );
+				}
+				else {
+					System.out.println( "ran out of elements to proccess" );
+					break;
+				}
+			}
+			while ( URLQueue.hasNext() );
+		}
+
 		if ( parser.hasFlag( INDEX ) ) {
 			Path outputIndex = parser.getPath( INDEX, "index.json" );
 
@@ -56,8 +83,20 @@ public class Driver {
 				}
 
 			}
+			if ( parser.hasValue( UrlFlag ) ) {
+				String url = parser.getValue( UrlFlag );
+				URL l = null;
+				try {
+					l = new URL( url );
+				}
+				catch ( MalformedURLException e ) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				URLQueue.add( l );
+			}
 		}
-		
+
 		if ( parser.hasValue( EXACT ) ) {
 			Path queryFile = parser.getPath( EXACT );
 
@@ -87,7 +126,7 @@ public class Driver {
 				System.out.println( "Partial Searching Inverted Index Failed" );
 			}
 		}
-		
+
 		if ( parser.hasFlag( RESULTS ) ) {
 
 			Path outputResult = parser.getPath( RESULTS, "results.json" );
