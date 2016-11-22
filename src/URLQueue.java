@@ -80,6 +80,7 @@ public class URLQueue {
 	public static void clear() {
 
 		urls.clear();
+		map.clear();
 		count = 0;
 	}
 
@@ -100,8 +101,8 @@ public class URLQueue {
 			URL r = urls.get( count - 1 ).toURI().resolve( url ).toURL();
 			return r;
 		}
-		catch ( MalformedURLException | URISyntaxException e ) {
-			System.out.println( url + "didnt work" );
+		catch ( MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
+			System.out.println( url + " didnt work" );
 			return null;
 		}
 	}
