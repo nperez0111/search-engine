@@ -51,6 +51,11 @@ public class URLQueue {
 		return true;
 	}
 
+	/**
+	 * Returns whether or not there are more urls to process
+	 * 
+	 * @return boolean
+	 */
 	public static boolean hasNext() {
 
 		if ( SIZE == count || count == urls.size() ) {
@@ -66,7 +71,7 @@ public class URLQueue {
 	 */
 	public static URL popQueue() {
 
-		if ( count != SIZE ) {
+		if ( isNotFull() ) {
 			count++;
 			System.out.println( "pop(" + ( count - 1 ) + "): " + normalize( urls.get( count - 1 ) ) );
 			return urls.get( count - 1 );
@@ -95,16 +100,30 @@ public class URLQueue {
 		return url.getProtocol() + "://" + url.getHost() + url.getFile();
 	}
 
+	/**
+	 * Resolves a URL against the current URL ( Assumed to be the seed URL )
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public static URL resolveAgainst( String url ) {
 
 		try {
-			URL r = urls.get( count - 1 ).toURI().resolve( url ).toURL();
-			return r;
+			return urls.get( count - 1 ).toURI().resolve( url ).toURL();
 		}
 		catch ( MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
-			System.out.println( url + " didnt work" );
 			return null;
 		}
+	}
+
+	/**
+	 * returns whether or not the queue is full
+	 * 
+	 * @return
+	 */
+	public static boolean isNotFull() {
+
+		return count != SIZE;
 	}
 
 }

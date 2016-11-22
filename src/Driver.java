@@ -51,8 +51,8 @@ public class Driver {
 				l = new URL( url );
 			}
 			catch ( MalformedURLException e ) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println( "Invalid URL Passed" );
+				return;
 			}
 			URLQueue.add( l );
 			do {
@@ -83,19 +83,6 @@ public class Driver {
 					System.out.println( "Outputting index to: " + outputIndex.toString() + " failed" );
 				}
 
-			}
-			if ( parser.hasValue( UrlFlag ) ) {
-				String url = parser.getValue( UrlFlag );
-				URL l = null;
-				try {
-					l = new URL( url );
-				}
-				catch ( MalformedURLException e ) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				URLQueue.add( l );
-				URLQueue.clear();
 			}
 		}
 
