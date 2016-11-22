@@ -46,6 +46,7 @@ public class Driver {
 		}
 		if ( parser.hasValue( UrlFlag ) ) {
 			String url = parser.getValue( UrlFlag );
+			System.out.println( url );
 			URL l = null;
 			try {
 				l = new URL( url );
@@ -66,6 +67,7 @@ public class Driver {
 				}
 			}
 			while ( URLQueue.hasNext() );
+			URLQueue.clear();
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {

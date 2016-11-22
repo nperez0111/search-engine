@@ -101,7 +101,7 @@ public class URLQueue {
 			return r;
 		}
 		catch ( MalformedURLException | URISyntaxException e ) {
-			System.out.println( "didnt work" );
+			System.out.println( url + "didnt work" );
 			return null;
 		}
 	}
