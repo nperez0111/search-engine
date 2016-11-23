@@ -65,7 +65,6 @@ public class LinkParser {
 		String html = HTMLCleaner.fetchHTML( seed.toString() );
 		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
-
 		if ( URLQueue.isNotFull() ) {
 			// Goes through all possible urls and if urlqueue is full we stop
 			// trying to add

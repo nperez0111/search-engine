@@ -23,10 +23,17 @@ public class URLQueue {
 	 */
 	public static boolean add( URL url ) {
 
+		String normalizedURL = normalize( url );
+		try {
+			url = new URL( normalizedURL );
+		}
+		catch ( MalformedURLException e ) {
+			return false;
+		}
 		if ( urls.size() < SIZE ) {
-			if ( !map.containsKey( normalize( url ) ) ) {
-				System.out.println( "put: " + normalize( url ) );
-				map.put( normalize( url ), url );
+			if ( !map.containsKey( normalizedURL ) ) {
+				System.out.println( "put: " + normalizedURL );
+				map.put( normalizedURL, url );
 				urls.add( url );
 				return true;
 			}
