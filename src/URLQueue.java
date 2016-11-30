@@ -31,6 +31,9 @@ public class URLQueue {
 			return false;
 		}
 		if ( urls.size() < SIZE ) {
+			if ( map.containsKey( normalizedURL ) ) {
+				return true;
+			}
 			if ( !map.containsKey( normalizedURL ) ) {
 				System.out.println( "put: " + normalizedURL );
 				map.put( normalizedURL, url );
@@ -71,6 +74,11 @@ public class URLQueue {
 		return true;
 	}
 
+	public static boolean canAddMoreURLs() {
+
+		return urls.size() < SIZE;
+	}
+
 	/**
 	 * returns the first element in the queue
 	 * 
@@ -78,7 +86,7 @@ public class URLQueue {
 	 */
 	public static URL popQueue() {
 
-		if ( isNotFull() ) {
+		if ( canProccessMoreURLs() ) {
 			count++;
 			System.out.println( "pop(" + ( count - 1 ) + "): " + normalize( urls.get( count - 1 ) ) );
 			return urls.get( count - 1 );
@@ -128,7 +136,7 @@ public class URLQueue {
 	 * 
 	 * @return
 	 */
-	public static boolean isNotFull() {
+	public static boolean canProccessMoreURLs() {
 
 		return count != SIZE;
 	}
