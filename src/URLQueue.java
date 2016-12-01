@@ -35,7 +35,7 @@ public class URLQueue {
 				return true;
 			}
 			if ( !map.containsKey( normalizedURL ) ) {
-				System.out.println( "put: " + normalizedURL );
+				// System.out.println( "put: " + normalizedURL );
 				map.put( normalizedURL, url );
 				urls.add( url );
 				return true;
@@ -93,7 +93,8 @@ public class URLQueue {
 
 		if ( canProccessMoreURLs() ) {
 			count++;
-			System.out.println( "pop(" + ( count - 1 ) + "): " + normalize( urls.get( count - 1 ) ) );
+			// System.out.println( "pop(" + ( count - 1 ) + "): " + normalize(
+			// urls.get( count - 1 ) ) );
 			return urls.get( count - 1 );
 		}
 		return null;

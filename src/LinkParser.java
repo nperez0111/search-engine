@@ -1,6 +1,5 @@
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,12 +65,6 @@ public class LinkParser {
 		String html = HTMLCleaner.fetchHTML( seed.toString() );
 		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
-
-		if ( seed.toString().equals( "http://cs.usfca.edu/~cs212/wdghtml40/block/p.html" )
-				|| seed.toString().equals( "http://cs.usfca.edu/~cs212/wdghtml40/forms/button.html" ) ) {
-			System.out.println( Arrays.toString( words ) );
-			System.out.println( HTMLCleaner.cleanHTML( html ) );
-		}
 
 		if ( URLQueue.canAddMoreURLs() ) {
 			// Goes through all possible urls and if urlqueue is full we stop
