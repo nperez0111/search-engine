@@ -9,8 +9,8 @@ public class Result implements Comparable<Result> {
 	 * 
 	 * @param word
 	 * @param where
-	 * @param c
-	 * @param i
+	 * @param count
+	 * @param index
 	 */
 	public Result( String where, int count, int index ) {
 		this.count = count;
@@ -59,7 +59,7 @@ public class Result implements Comparable<Result> {
 	/**
 	 * allows changing the index
 	 * 
-	 * @param i
+	 * @param newIndex
 	 */
 	public void setIndex( int newIndex ) {
 
