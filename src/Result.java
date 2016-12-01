@@ -81,7 +81,7 @@ public class Result implements Comparable<Result> {
 			return Integer.compare( index, o.getIndex() );
 		}
 
-		return where.toLowerCase().compareTo( o.getWhere().toLowerCase() );
+		return where.compareTo( o.getWhere() );
 	}
 
 	/**

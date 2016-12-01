@@ -111,7 +111,7 @@ public class HTMLCleaner {
 	 */
 	public static String stripElement( String name, String html ) {
 
-		String REGEX = "(?is)<" + name + "[^>]*?>.+?</" + name + "[^>]*?>";
+		String REGEX = "(?is)<" + name + "[^>]*?>.*?</" + name + "[^>]*?>";
 		return html.replaceAll( REGEX, "" );
 	}
 
