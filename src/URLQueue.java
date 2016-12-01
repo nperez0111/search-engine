@@ -74,6 +74,11 @@ public class URLQueue {
 		return true;
 	}
 
+	/**
+	 * returns true if the urlqueue can add more urls
+	 * 
+	 * @return boolean
+	 */
 	public static boolean canAddMoreURLs() {
 
 		return urls.size() < SIZE;
