@@ -34,23 +34,37 @@ public class InvertedIndexBuilder {
 		}
 	}
 
+	/**
+	 * Parses a single line of a file and adds it to the index
+	 * 
+	 * @param line
+	 * @param fileName
+	 * @param count
+	 * @param index
+	 * @return
+	 */
 	public static int parseLine( String line, String fileName, int count, InvertedIndex index ) {
 
 		String[] list = StringCleaner.stripNonAlphaNumeric( line ).split( "\\s+" );
-		for ( String word : list ) {
-			if ( !word.trim().equals( "" ) ) {
-				index.add( word.trim(), fileName, count );
-				count++;
-			}
-		}
-		return count;
+		return parseLine( list, fileName, count, index );
 	}
 
+	/**
+	 * parses an array of words into an index
+	 * 
+	 * @param list
+	 * @param fileName
+	 * @param count
+	 * @param index
+	 * @return
+	 */
 	public static int parseLine( String[] list, String fileName, int count, InvertedIndex index ) {
 
 		for ( String word : list ) {
-			if ( !word.trim().equals( "" ) ) {
-				index.add( word.trim(), fileName, count );
+			word = word.trim();
+
+			if ( !word.equals( "" ) ) {
+				index.add( word, fileName, count );
 				count++;
 			}
 		}

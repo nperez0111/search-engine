@@ -23,10 +23,20 @@ public class URLQueue {
 	 */
 	public static boolean add( URL url ) {
 
+		String normalizedURL = normalize( url );
+		try {
+			url = new URL( normalizedURL );
+		}
+		catch ( MalformedURLException e ) {
+			return false;
+		}
 		if ( urls.size() < SIZE ) {
-			if ( !map.containsKey( normalize( url ) ) ) {
-				System.out.println( "put: " + normalize( url ) );
-				map.put( normalize( url ), url );
+			if ( map.containsKey( normalizedURL ) ) {
+				return true;
+			}
+			if ( !map.containsKey( normalizedURL ) ) {
+				// System.out.println( "put: " + normalizedURL );
+				map.put( normalizedURL, url );
 				urls.add( url );
 				return true;
 			}
@@ -51,6 +61,11 @@ public class URLQueue {
 		return true;
 	}
 
+	/**
+	 * Returns whether or not there are more urls to process
+	 * 
+	 * @return boolean
+	 */
 	public static boolean hasNext() {
 
 		if ( SIZE == count || count == urls.size() ) {
@@ -60,15 +75,26 @@ public class URLQueue {
 	}
 
 	/**
+	 * returns true if the urlqueue can add more urls
+	 * 
+	 * @return boolean
+	 */
+	public static boolean canAddMoreURLs() {
+
+		return urls.size() < SIZE;
+	}
+
+	/**
 	 * returns the first element in the queue
 	 * 
 	 * @return url to parse
 	 */
 	public static URL popQueue() {
 
-		if ( count != SIZE ) {
+		if ( canProccessMoreURLs() ) {
 			count++;
-			System.out.println( "pop(" + ( count - 1 ) + "): " + normalize( urls.get( count - 1 ) ) );
+			// System.out.println( "pop(" + ( count - 1 ) + "): " + normalize(
+			// urls.get( count - 1 ) ) );
 			return urls.get( count - 1 );
 		}
 		return null;
@@ -80,6 +106,7 @@ public class URLQueue {
 	public static void clear() {
 
 		urls.clear();
+		map.clear();
 		count = 0;
 	}
 
@@ -94,16 +121,30 @@ public class URLQueue {
 		return url.getProtocol() + "://" + url.getHost() + url.getFile();
 	}
 
+	/**
+	 * Resolves a URL against the current URL ( Assumed to be the seed URL )
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public static URL resolveAgainst( String url ) {
 
 		try {
-			URL r = urls.get( count - 1 ).toURI().resolve( url ).toURL();
-			return r;
+			return urls.get( count - 1 ).toURI().resolve( url ).toURL();
 		}
-		catch ( MalformedURLException | URISyntaxException e ) {
-			System.out.println( "didnt work" );
+		catch ( MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
 			return null;
 		}
+	}
+
+	/**
+	 * returns whether or not the queue is full
+	 * 
+	 * @return
+	 */
+	public static boolean canProccessMoreURLs() {
+
+		return count != SIZE;
 	}
 
 }

@@ -53,26 +53,32 @@ public class LinkParser {
 		return links;
 	}
 
-	private static ArrayList<URL> listURLs( String text ) {
-
-		ArrayList<URL> urls = new ArrayList<>();
-		for ( String link : listLinks( text ) ) {
-			URL url = URLQueue.resolveAgainst( link );
-			if ( url != null ) {
-				urls.add( url );
-			}
-		}
-		return urls;
-	}
-
+	/**
+	 * Downloads the url seed provided and inputs all its words into the
+	 * inverted index while also building the urlqueue
+	 * 
+	 * @param seed
+	 * @param index
+	 */
 	public static void search( URL seed, InvertedIndex index ) {
 
 		String html = HTMLCleaner.fetchHTML( seed.toString() );
 		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
-		ArrayList<URL> links = listURLs( html );
 
-		URLQueue.addAll( links );
+		if ( URLQueue.canAddMoreURLs() ) {
+			// Goes through all possible urls and if urlqueue is full we stop
+			// trying to add
+
+			for ( String link : listLinks( html ) ) {
+				URL url = URLQueue.resolveAgainst( link );
+				if ( url != null ) {
+					if ( URLQueue.add( url ) == false ) {
+						return;
+					}
+				}
+			}
+		}
 
 	}
 
