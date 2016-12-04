@@ -30,7 +30,7 @@ public class Driver {
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
-		InvertedIndex index = new InvertedIndex();
+		InvertedIndex index = new ThreadSafeInvertedIndex();
 		SearchInvertedIndex search = new SearchInvertedIndex( index );
 
 		if ( parser.hasValue( DIR ) ) {
