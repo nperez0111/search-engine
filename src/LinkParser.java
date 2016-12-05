@@ -59,21 +59,22 @@ public class LinkParser {
 	 * 
 	 * @param seed
 	 * @param index
+	 * @param queue
 	 */
-	public static void search( URL seed, InvertedIndex index ) {
+	public static void search( URL seed, InvertedIndex index, URLQueue queue ) {
 
 		String html = HTMLCleaner.fetchHTML( seed.toString() );
 		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
 
-		if ( URLQueue.canAddMoreURLs() ) {
+		if ( queue.canAddMoreURLs() ) {
 			// Goes through all possible urls and if urlqueue is full we stop
 			// trying to add
 
 			for ( String link : listLinks( html ) ) {
-				URL url = URLQueue.resolveAgainst( link );
+				URL url = queue.resolveAgainst( link );
 				if ( url != null ) {
-					if ( URLQueue.add( url ) == false ) {
+					if ( queue.add( url ) == false ) {
 						return;
 					}
 				}

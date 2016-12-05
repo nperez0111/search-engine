@@ -8,11 +8,17 @@ import java.util.Map;
 
 public class URLQueue {
 
-	private static final List<URL> urls = new ArrayList<>();
-	private static final Map<String, URL> map = new HashMap<>();
-	private static int count = 0;
+	private final List<URL> urls;
+	private final Map<String, URL> map;
+	private int count;
 
 	public static final int SIZE = 50;
+
+	public URLQueue() {
+		urls = new ArrayList<>();
+		map = new HashMap<>();
+		count = 0;
+	}
 
 	/**
 	 * adds a url queue to the queue
@@ -21,7 +27,7 @@ public class URLQueue {
 	 * @return false if queue is full true if the url is in the queue or added
 	 *         to the queue
 	 */
-	public static boolean add( URL url ) {
+	public boolean add( URL url ) {
 
 		String normalizedURL = normalize( url );
 		try {
@@ -34,7 +40,7 @@ public class URLQueue {
 			if ( map.containsKey( normalizedURL ) ) {
 				return true;
 			}
-			if ( !map.containsKey( normalizedURL ) ) {
+			else {
 				// System.out.println( "put: " + normalizedURL );
 				map.put( normalizedURL, url );
 				urls.add( url );
@@ -51,7 +57,7 @@ public class URLQueue {
 	 * @param urls
 	 * @return
 	 */
-	public static boolean addAll( List<URL> urls ) {
+	public boolean addAll( List<URL> urls ) {
 
 		for ( URL url : urls ) {
 			if ( add( url ) == false ) {
@@ -66,7 +72,7 @@ public class URLQueue {
 	 * 
 	 * @return boolean
 	 */
-	public static boolean hasNext() {
+	public boolean hasNext() {
 
 		if ( SIZE == count || count == urls.size() ) {
 			return false;
@@ -79,7 +85,7 @@ public class URLQueue {
 	 * 
 	 * @return boolean
 	 */
-	public static boolean canAddMoreURLs() {
+	public boolean canAddMoreURLs() {
 
 		return urls.size() < SIZE;
 	}
@@ -89,7 +95,7 @@ public class URLQueue {
 	 * 
 	 * @return url to parse
 	 */
-	public static URL popQueue() {
+	public URL popQueue() {
 
 		if ( canProccessMoreURLs() ) {
 			count++;
@@ -103,7 +109,7 @@ public class URLQueue {
 	/**
 	 * clears out the urlqueue to reset it
 	 */
-	public static void clear() {
+	public void clear() {
 
 		urls.clear();
 		map.clear();
@@ -116,7 +122,7 @@ public class URLQueue {
 	 * @param url
 	 * @return
 	 */
-	private static String normalize( URL url ) {
+	private String normalize( URL url ) {
 
 		return url.getProtocol() + "://" + url.getHost() + url.getFile();
 	}
@@ -127,7 +133,7 @@ public class URLQueue {
 	 * @param url
 	 * @return
 	 */
-	public static URL resolveAgainst( String url ) {
+	public URL resolveAgainst( String url ) {
 
 		try {
 			return urls.get( count - 1 ).toURI().resolve( url ).toURL();
@@ -142,7 +148,7 @@ public class URLQueue {
 	 * 
 	 * @return
 	 */
-	public static boolean canProccessMoreURLs() {
+	public boolean canProccessMoreURLs() {
 
 		return count != SIZE;
 	}

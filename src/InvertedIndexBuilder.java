@@ -81,14 +81,46 @@ public class InvertedIndexBuilder {
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath, InvertedIndex index ) throws IOException {
+	public static InvertedIndex build( Path inputPath, ThreadSafeInvertedIndex index ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
 
+		WorkQueue minions = new WorkQueue();
+
 		for ( Path file : files ) {
-			parseInput( file, index );
+
+			minions.execute( new ParserTask( file, index ) );
+
 		}
+
+		minions.finish();
+		minions.shutdown();
 		return index;
+
+	}
+
+	private static class ParserTask implements Runnable {
+
+		private final Path file;
+		private final ThreadSafeInvertedIndex index;
+
+		public ParserTask( Path file, ThreadSafeInvertedIndex index ) {
+			this.file = file;
+			this.index = index;
+		}
+
+		@Override
+		public void run() {
+
+			// InvertedIndex index = new InvertedIndex();
+			try {
+				parseInput( file, index );
+			}
+			catch ( IOException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 

@@ -47,7 +47,7 @@ public class WorkQueue {
 	public WorkQueue( int threads ) {
 		queue = new LinkedList<Runnable>();
 		workers = new PoolWorker[threads];
-
+		pending = 0;
 		shutdown = false;
 
 		// start the threads so they are waiting in the background

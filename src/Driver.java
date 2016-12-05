@@ -30,7 +30,7 @@ public class Driver {
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
-		InvertedIndex index = new ThreadSafeInvertedIndex();
+		ThreadSafeInvertedIndex index = new ThreadSafeInvertedIndex();
 		SearchInvertedIndex search = new SearchInvertedIndex( index );
 
 		if ( parser.hasValue( DIR ) ) {
@@ -54,19 +54,20 @@ public class Driver {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
-			URLQueue.add( l );
+			URLQueue queue = new URLQueue();
+			queue.add( l );
 			do {
-				URL popped = URLQueue.popQueue();
+				URL popped = queue.popQueue();
 				if ( popped != null ) {
-					LinkParser.search( popped, index );
+					LinkParser.search( popped, index, queue );
 				}
 				else {
 					System.out.println( "ran out of elements to proccess" );
 					break;
 				}
 			}
-			while ( URLQueue.hasNext() );
-			URLQueue.clear();
+			while ( queue.hasNext() );
+			queue.clear();
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {
