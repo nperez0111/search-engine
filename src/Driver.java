@@ -20,6 +20,7 @@ public class Driver {
 	private final static String RESULTS = "-results";
 	private final static String EXACT = "-exact";
 	private final static String UrlFlag = "-url";
+	private final static String MULTI = "-multi";
 
 	/**
 	 * First method to be called parses arguments and calls the correct methods
@@ -37,7 +38,12 @@ public class Driver {
 			Path inputIndex = getValidDirectory( parser.getValue( DIR ) );
 			if ( inputIndex != null ) {
 				try {
-					InvertedIndexBuilder.build( inputIndex, index );
+					if ( parser.hasValue( MULTI ) ) {
+						InvertedIndexBuilder.buildMultiThreaded( inputIndex, index, parser.getValue( MULTI, 5 ) );
+					}
+					else {
+						InvertedIndexBuilder.build( inputIndex, index );
+					}
 				}
 				catch ( IOException e ) {
 					System.out.println( "Directory " + inputIndex.toString() + ", Not Found or Non-Existant" );
@@ -54,12 +60,13 @@ public class Driver {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
-			URLQueue queue = new URLQueue();
+			ThreadSafeURLQueue queue = new ThreadSafeURLQueue();
 			queue.add( l );
 			do {
 				URL popped = queue.popQueue();
+
 				if ( popped != null ) {
-					LinkParser.search( popped, index, queue );
+					HTMLDownloader.parseIntoIndex( popped, index, queue );
 				}
 				else {
 					System.out.println( "ran out of elements to proccess" );

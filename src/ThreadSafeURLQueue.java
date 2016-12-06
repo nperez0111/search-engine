@@ -49,9 +49,9 @@ public class ThreadSafeURLQueue extends URLQueue {
 	@Override
 	public URL popQueue() {
 
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		URL url = super.popQueue();
-		lock.unlockReadWrite();
+		lock.unlockReadOnly();
 		return url;
 	}
 

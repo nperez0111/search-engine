@@ -1,4 +1,3 @@
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,36 +50,6 @@ public class LinkParser {
 			links.add( m.group( GROUP ) );
 		}
 		return links;
-	}
-
-	/**
-	 * Downloads the url seed provided and inputs all its words into the
-	 * inverted index while also building the urlqueue
-	 * 
-	 * @param seed
-	 * @param index
-	 * @param queue
-	 */
-	public static void search( URL seed, InvertedIndex index, URLQueue queue ) {
-
-		String html = HTMLCleaner.fetchHTML( seed.toString() );
-		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
-		InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
-
-		if ( queue.canAddMoreURLs() ) {
-			// Goes through all possible urls and if urlqueue is full we stop
-			// trying to add
-
-			for ( String link : listLinks( html ) ) {
-				URL url = queue.resolveAgainst( link );
-				if ( url != null ) {
-					if ( queue.add( url ) == false ) {
-						return;
-					}
-				}
-			}
-		}
-
 	}
 
 }

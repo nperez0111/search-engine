@@ -81,11 +81,12 @@ public class InvertedIndexBuilder {
 	 * @param index
 	 * @throws IOException
 	 */
-	public static InvertedIndex build( Path inputPath, ThreadSafeInvertedIndex index ) throws IOException {
+	public static InvertedIndex buildMultiThreaded( Path inputPath, ThreadSafeInvertedIndex index, int threads )
+			throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
 
-		WorkQueue minions = new WorkQueue();
+		WorkQueue minions = new WorkQueue( threads );
 
 		for ( Path file : files ) {
 
@@ -95,6 +96,27 @@ public class InvertedIndexBuilder {
 
 		minions.finish();
 		minions.shutdown();
+		return index;
+
+	}
+
+	/**
+	 * This goes through all the files from the input path and adds all the
+	 * necessary data to the InvertedIndex. Then Prints the InvertedIndex when
+	 * finished adding all the necessary data.
+	 *
+	 * @param inputPath
+	 * @param outputFile
+	 * @param index
+	 * @throws IOException
+	 */
+	public static InvertedIndex build( Path inputPath, InvertedIndex index ) throws IOException {
+
+		List<Path> files = DirectoryTraverser.validFiles( inputPath );
+
+		for ( Path file : files ) {
+			parseInput( file, index );
+		}
 		return index;
 
 	}
