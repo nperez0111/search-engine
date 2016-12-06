@@ -1,5 +1,4 @@
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +31,9 @@ public class HTMLDownloader {
 			String html = HTMLCleaner.fetchHTML( seed.toString() );
 			String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 			InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
-
 			if ( queue.canAddMoreURLs() ) {
 				List<URL> urls = new ArrayList<>();
 				for ( String link : LinkParser.listLinks( html ) ) {
-
 					URL url = normalize( resolve( seed, link ) );
 
 					if ( url != null ) {
@@ -46,7 +43,6 @@ public class HTMLDownloader {
 					}
 
 				}
-				log.info( "um" );
 				for ( URL url : queue.addAll( urls ) ) {
 					log.info( "Added:" + url.toString() );
 					workers.execute( new PageTask( url, index, workers, queue ) );
@@ -59,6 +55,9 @@ public class HTMLDownloader {
 
 		private URL normalize( URL url ) {
 
+			if ( url == null ) {
+				return null;
+			}
 			try {
 				return new URL( url.getProtocol() + "://" + url.getHost() + url.getFile() );
 			}
@@ -72,7 +71,7 @@ public class HTMLDownloader {
 			try {
 				return url.toURI().resolve( link ).toURL();
 			}
-			catch ( MalformedURLException | URISyntaxException e ) {
+			catch ( Exception e ) {
 				return null;
 			}
 		}
