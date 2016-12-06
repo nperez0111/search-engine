@@ -50,6 +50,13 @@ public class URLQueue {
 		return false;
 	}
 
+	/**
+	 * special add is the same as an add except if the url has already been in
+	 * the index it returns false
+	 * 
+	 * @param u
+	 * @return false if a failed add or if url is in list
+	 */
 	public boolean specialAdd( URL u ) {
 
 		if ( map.containsKey( normalize( u ) ) ) {
@@ -62,20 +69,6 @@ public class URLQueue {
 
 		return true;
 	}
-
-	/**
-	 * Adds all of the Urls in a list to the URL queue and returns false if all
-	 * of them could not be added
-	 * 
-	 * @param urls
-	 * @return / public int addAll( List<URL> urls ) {
-	 * 
-	 *         int c = 0; for ( URL url : urls ) { if ( map.containsKey(
-	 *         url.toString() ) ) {
-	 * 
-	 *         } else { if ( add( url ) == false ) { return c; } c++; } } return
-	 *         c; }
-	 */
 
 	/**
 	 * Returns whether or not there are more urls to process
@@ -161,11 +154,6 @@ public class URLQueue {
 	public boolean canProccessMoreURLs() {
 
 		return count != SIZE;
-	}
-
-	public int getSize() {
-
-		return urls.size();
 	}
 
 }
