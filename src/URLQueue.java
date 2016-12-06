@@ -41,7 +41,7 @@ public class URLQueue {
 				return true;
 			}
 			else {
-				// System.out.println( "put: " + normalizedURL );
+				Driver.log.trace( "put: " + normalizedURL );
 				map.put( normalizedURL, url );
 				urls.add( url );
 				return true;
@@ -50,22 +50,32 @@ public class URLQueue {
 		return false;
 	}
 
+	public boolean specialAdd( URL u ) {
+
+		if ( map.containsKey( normalize( u ) ) ) {
+
+			return false;
+		}
+		if ( add( u ) == false ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Adds all of the Urls in a list to the URL queue and returns false if all
 	 * of them could not be added
 	 * 
 	 * @param urls
-	 * @return
+	 * @return / public int addAll( List<URL> urls ) {
+	 * 
+	 *         int c = 0; for ( URL url : urls ) { if ( map.containsKey(
+	 *         url.toString() ) ) {
+	 * 
+	 *         } else { if ( add( url ) == false ) { return c; } c++; } } return
+	 *         c; }
 	 */
-	public boolean addAll( List<URL> urls ) {
-
-		for ( URL url : urls ) {
-			if ( add( url ) == false ) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Returns whether or not there are more urls to process
@@ -151,6 +161,11 @@ public class URLQueue {
 	public boolean canProccessMoreURLs() {
 
 		return count != SIZE;
+	}
+
+	public int getSize() {
+
+		return urls.size();
 	}
 
 }

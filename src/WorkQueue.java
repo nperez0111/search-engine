@@ -45,6 +45,9 @@ public class WorkQueue {
 	 *            number of worker threads; should be greater than 1
 	 */
 	public WorkQueue( int threads ) {
+		if ( threads < 1 ) {
+			threads = 1;
+		}
 		queue = new LinkedList<Runnable>();
 		workers = new PoolWorker[threads];
 		pending = 0;
@@ -159,7 +162,7 @@ public class WorkQueue {
 							queue.wait();
 						}
 						catch ( InterruptedException ex ) {
-							System.err.println( "Warning: Work queue interrupted." );
+							Driver.log.warn( "Warning: Work queue interrupted." );
 							Thread.currentThread().interrupt();
 						}
 					}

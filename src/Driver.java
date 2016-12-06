@@ -5,6 +5,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * This is the driver class that calls all the other classes to build the
  * inverted index and output it into file as well as search it
@@ -21,6 +24,7 @@ public class Driver {
 	private final static String EXACT = "-exact";
 	private final static String UrlFlag = "-url";
 	private final static String MULTI = "-multi";
+	protected static Logger log = LogManager.getLogger();
 
 	/**
 	 * First method to be called parses arguments and calls the correct methods
@@ -52,6 +56,7 @@ public class Driver {
 		}
 		if ( parser.hasValue( UrlFlag ) ) {
 			String url = parser.getValue( UrlFlag );
+			log.info( url );
 			URL l = null;
 			try {
 				l = new URL( url );
@@ -60,21 +65,26 @@ public class Driver {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
-			ThreadSafeURLQueue queue = new ThreadSafeURLQueue();
-			queue.add( l );
-			do {
-				URL popped = queue.popQueue();
-
-				if ( popped != null ) {
-					HTMLDownloader.parseIntoIndex( popped, index, queue );
-				}
-				else {
-					System.out.println( "ran out of elements to proccess" );
-					break;
-				}
+			if ( !parser.hasFlag( MULTI ) ) {
+				HTMLDownloader.parseIntoIndexMultiThread( l, index, parser.getValue( MULTI, 5 ) );
 			}
-			while ( queue.hasNext() );
-			queue.clear();
+			else {
+				URLQueue queue = new URLQueue();
+				queue.add( l );
+				do {
+					URL popped = queue.popQueue();
+
+					if ( popped != null ) {
+						HTMLDownloader.parseIntoIndex( popped, index, queue );
+					}
+					else {
+						System.out.println( "ran out of elements to proccess" );
+						break;
+					}
+				}
+				while ( queue.hasNext() );
+				queue.clear();
+			}
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {

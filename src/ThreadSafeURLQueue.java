@@ -1,8 +1,12 @@
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.logging.log4j.Logger;
 
 public class ThreadSafeURLQueue extends URLQueue {
 
+	private Logger log = Driver.log;
 	private ReadWriteLock lock;
 
 	public ThreadSafeURLQueue() {
@@ -10,22 +14,26 @@ public class ThreadSafeURLQueue extends URLQueue {
 		lock = new ReadWriteLock();
 	}
 
-	@Override
-	public boolean add( URL url ) {
+	public boolean addToQueue( URL url ) {
 
 		lock.lockReadWrite();
-		boolean success = super.add( url );
+		boolean success = super.specialAdd( url );
 		lock.unlockReadWrite();
 		return success;
 	}
 
-	@Override
-	public boolean addAll( List<URL> urls ) {
+	public List<URL> addAll( List<URL> urls ) {
 
-		lock.lockReadWrite();
-		boolean success = super.addAll( urls );
-		lock.unlockReadWrite();
-		return success;
+		List<URL> list = new ArrayList<>();
+		for ( URL url : urls ) {
+
+			if ( addToQueue( url ) ) {
+				log.debug( "URL:" + url.toString() );
+				list.add( url );
+			}
+
+		}
+		return list;
 	}
 
 	@Override

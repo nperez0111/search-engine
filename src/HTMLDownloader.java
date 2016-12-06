@@ -1,31 +1,95 @@
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.Logger;
 
 public class HTMLDownloader {
 
+	private static final Logger log = Driver.log;
+
 	private static class PageTask implements Runnable {
 
-		private final URL url;
+		private final URL seed;
 		private final ThreadSafeInvertedIndex index;
+		private final WorkQueue workers;
+		private ThreadSafeURLQueue queue;
 
-		public PageTask( URL url, ThreadSafeInvertedIndex index ) {
-			this.url = url;
+		public PageTask( URL seed, ThreadSafeInvertedIndex index, WorkQueue workers, ThreadSafeURLQueue queue ) {
+			this.seed = seed;
 			this.index = index;
+			this.workers = workers;
+			this.queue = queue;
+			log.info( "Seed:" + seed.toString() );
+
 		}
 
 		@Override
 		public void run() {
 
+			String html = HTMLCleaner.fetchHTML( seed.toString() );
+			String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
+			InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
+
+			if ( queue.canAddMoreURLs() ) {
+				List<URL> urls = new ArrayList<>();
+				for ( String link : LinkParser.listLinks( html ) ) {
+
+					URL url = normalize( resolve( seed, link ) );
+
+					if ( url != null ) {
+
+						urls.add( url );
+
+					}
+
+				}
+				log.info( "um" );
+				for ( URL url : queue.addAll( urls ) ) {
+					log.info( "Added:" + url.toString() );
+					workers.execute( new PageTask( url, index, workers, queue ) );
+
+				}
+
+			}
+
+		}
+
+		private URL normalize( URL url ) {
+
+			try {
+				return new URL( url.getProtocol() + "://" + url.getHost() + url.getFile() );
+			}
+			catch ( MalformedURLException e ) {
+				return null;
+			}
+		}
+
+		private URL resolve( URL url, String link ) {
+
+			try {
+				return url.toURI().resolve( link ).toURL();
+			}
+			catch ( MalformedURLException | URISyntaxException e ) {
+				return null;
+			}
 		}
 
 	}
 
-	public static void parseIntoIndexMultiThread( URL seed, InvertedIndex index, URLQueue queue, int threads ) {
+	public static void parseIntoIndexMultiThread( URL seed, ThreadSafeInvertedIndex index, int threads ) {
 
 		WorkQueue minions = new WorkQueue( threads );
-
+		ThreadSafeURLQueue queue = new ThreadSafeURLQueue();
+		log.info( "seed" );
+		queue.add( seed );
+		log.info( "minions starting" );
+		minions.execute( new PageTask( seed, index, minions, queue ) );
 		minions.finish();
 		minions.shutdown();
+		log.info( "minions finish" );
 	}
 
 	/**
