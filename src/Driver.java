@@ -65,7 +65,7 @@ public class Driver {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
-			if ( !parser.hasFlag( MULTI ) ) {
+			if ( parser.hasFlag( MULTI ) ) {
 				HTMLDownloader.parseIntoIndexMultiThread( l, index, parser.getValue( MULTI, 5 ) );
 			}
 			else {
@@ -108,14 +108,19 @@ public class Driver {
 			Path queryFile = parser.getPath( EXACT );
 
 			if ( queryFile == null ) {
-				System.out.println( "Query file is not an actual path." );
+				log.error( "Query file is not an actual path." );
 				return;
 			}
 			try {
-				search.exact( queryFile );
+				if ( parser.hasFlag( MULTI ) ) {
+					search.exactMultiThreaded( queryFile, parser.getValue( MULTI, 5 ) );
+				}
+				else {
+					search.exact( queryFile );
+				}
 			}
 			catch ( IOException e ) {
-				System.out.println( "Exact Searching Inverted Index Failed" );
+				log.error( "Exact Searching Inverted Index Failed" );
 			}
 		}
 
@@ -127,7 +132,12 @@ public class Driver {
 				return;
 			}
 			try {
-				search.partial( queryFile );
+				if ( parser.hasFlag( MULTI ) ) {
+					search.partialMultiThreaded( queryFile, parser.getValue( MULTI, 5 ) );
+				}
+				else {
+					search.partial( queryFile );
+				}
 			}
 			catch ( IOException e ) {
 				System.out.println( "Partial Searching Inverted Index Failed" );
