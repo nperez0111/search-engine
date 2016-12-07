@@ -54,19 +54,9 @@ public class Driver {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
-			URLQueue.add( l );
-			do {
-				URL popped = URLQueue.popQueue();
-				if ( popped != null ) {
-					LinkParser.search( popped, index );
-				}
-				else {
-					System.out.println( "ran out of elements to proccess" );
-					break;
-				}
-			}
-			while ( URLQueue.hasNext() );
-			URLQueue.clear();
+
+			WebCrawler crawler = new WebCrawler( l, index );
+			crawler.crawl();
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {
