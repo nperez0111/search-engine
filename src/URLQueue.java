@@ -1,18 +1,21 @@
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 public class URLQueue {
 
-	private static final List<URL> urls = new ArrayList<>();
-	private static final Map<String, URL> map = new HashMap<>();
-	private static int count = 0;
-
+	private final Queue<URL> queue;
+	private final Set<String> urlsSeen;
 	public static final int SIZE = 50;
+
+	public URLQueue() {
+		queue = new LinkedList<>();
+		urlsSeen = new HashSet<>();
+	}
 
 	/**
 	 * adds a url queue to the queue
@@ -21,23 +24,17 @@ public class URLQueue {
 	 * @return false if queue is full true if the url is in the queue or added
 	 *         to the queue
 	 */
-	public static boolean add( URL url ) {
+	public boolean add( URL url ) {
 
-		String normalizedURL = normalize( url );
-		try {
-			url = new URL( normalizedURL );
-		}
-		catch ( MalformedURLException e ) {
-			return false;
-		}
-		if ( urls.size() < SIZE ) {
-			if ( map.containsKey( normalizedURL ) ) {
+		url = normalize( url );
+		String urlString = url.toString();
+		if ( canAddMoreURLs() ) {
+			if ( urlsSeen.contains( urlString ) ) {
 				return true;
 			}
-			if ( !map.containsKey( normalizedURL ) ) {
-				// System.out.println( "put: " + normalizedURL );
-				map.put( normalizedURL, url );
-				urls.add( url );
+			else {
+				urlsSeen.add( urlString );
+				queue.add( url );
 				return true;
 			}
 		}
@@ -45,33 +42,13 @@ public class URLQueue {
 	}
 
 	/**
-	 * Adds all of the Urls in a list to the URL queue and returns false if all
-	 * of them could not be added
-	 * 
-	 * @param urls
-	 * @return
-	 */
-	public static boolean addAll( List<URL> urls ) {
-
-		for ( URL url : urls ) {
-			if ( add( url ) == false ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Returns whether or not there are more urls to process
 	 * 
 	 * @return boolean
 	 */
-	public static boolean hasNext() {
+	public boolean hasNext() {
 
-		if ( SIZE == count || count == urls.size() ) {
-			return false;
-		}
-		return true;
+		return queue.size() > 0;
 	}
 
 	/**
@@ -79,9 +56,9 @@ public class URLQueue {
 	 * 
 	 * @return boolean
 	 */
-	public static boolean canAddMoreURLs() {
+	public boolean canAddMoreURLs() {
 
-		return urls.size() < SIZE;
+		return urlsSeen.size() < SIZE;
 	}
 
 	/**
@@ -89,25 +66,9 @@ public class URLQueue {
 	 * 
 	 * @return url to parse
 	 */
-	public static URL popQueue() {
+	public URL popQueue() {
 
-		if ( canProccessMoreURLs() ) {
-			count++;
-			// System.out.println( "pop(" + ( count - 1 ) + "): " + normalize(
-			// urls.get( count - 1 ) ) );
-			return urls.get( count - 1 );
-		}
-		return null;
-	}
-
-	/**
-	 * clears out the urlqueue to reset it
-	 */
-	public static void clear() {
-
-		urls.clear();
-		map.clear();
-		count = 0;
+		return queue.remove();
 	}
 
 	/**
@@ -116,9 +77,14 @@ public class URLQueue {
 	 * @param url
 	 * @return
 	 */
-	private static String normalize( URL url ) {
+	public static URL normalize( URL url ) {
 
-		return url.getProtocol() + "://" + url.getHost() + url.getFile();
+		try {
+			return new URL( url.getProtocol(), url.getHost(), url.getFile() );
+		}
+		catch ( MalformedURLException e ) {
+			return null;
+		}
 	}
 
 	/**
@@ -127,24 +93,14 @@ public class URLQueue {
 	 * @param url
 	 * @return
 	 */
-	public static URL resolveAgainst( String url ) {
+	public static URL resolveAgainst( URL base, String url ) {
 
 		try {
-			return urls.get( count - 1 ).toURI().resolve( url ).toURL();
+			return base.toURI().resolve( url ).toURL();
 		}
 		catch ( MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
 			return null;
 		}
-	}
-
-	/**
-	 * returns whether or not the queue is full
-	 * 
-	 * @return
-	 */
-	public static boolean canProccessMoreURLs() {
-
-		return count != SIZE;
 	}
 
 }
