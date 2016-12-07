@@ -11,6 +11,9 @@ public class WebCrawler {
 		queue.add( seed );
 	}
 
+	/*
+	 * starts the proccess to begin the crawl
+	 */
 	public void crawl() {
 
 		do {
