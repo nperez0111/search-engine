@@ -110,7 +110,7 @@ public class HTMLDownloader {
 			// trying to add
 
 			for ( String link : LinkParser.listLinks( html ) ) {
-				URL url = queue.resolveAgainst( link );
+				URL url = URLQueue.resolveAgainst( seed, link );
 				if ( url != null ) {
 					if ( queue.add( url ) == false ) {
 						return;

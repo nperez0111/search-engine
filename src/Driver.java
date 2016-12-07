@@ -69,21 +69,8 @@ public class Driver {
 				HTMLDownloader.parseIntoIndexMultiThread( l, index, parser.getValue( MULTI, 5 ) );
 			}
 			else {
-				URLQueue queue = new URLQueue();
-				queue.add( l );
-				do {
-					URL popped = queue.popQueue();
-
-					if ( popped != null ) {
-						HTMLDownloader.parseIntoIndex( popped, index, queue );
-					}
-					else {
-						System.out.println( "ran out of elements to proccess" );
-						break;
-					}
-				}
-				while ( queue.hasNext() );
-				queue.clear();
+				WebCrawler crawler = new WebCrawler( l, index );
+				crawler.crawl();
 			}
 		}
 

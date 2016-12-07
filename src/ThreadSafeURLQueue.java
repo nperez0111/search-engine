@@ -63,30 +63,4 @@ public class ThreadSafeURLQueue extends URLQueue {
 		return url;
 	}
 
-	@Override
-	public void clear() {
-
-		lock.lockReadWrite();
-		super.clear();
-		lock.unlockReadWrite();
-	}
-
-	@Override
-	public URL resolveAgainst( String url ) {
-
-		lock.lockReadOnly();
-		URL cleanUrl = super.resolveAgainst( url );
-		lock.unlockReadOnly();
-		return cleanUrl;
-	}
-
-	@Override
-	public boolean canProccessMoreURLs() {
-
-		lock.lockReadOnly();
-		boolean success = super.canProccessMoreURLs();
-		lock.unlockReadOnly();
-		return success;
-	}
-
 }

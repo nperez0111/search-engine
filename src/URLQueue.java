@@ -1,23 +1,20 @@
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 public class URLQueue {
 
-	private final List<URL> urls;
-	private final Map<String, URL> map;
-	private int count;
-
+	private final Queue<URL> queue;
+	private final Set<String> urlsSeen;
 	public static final int SIZE = 50;
 
 	public URLQueue() {
-		urls = new ArrayList<>();
-		map = new HashMap<>();
-		count = 0;
+		queue = new LinkedList<>();
+		urlsSeen = new HashSet<>();
 	}
 
 	/**
@@ -29,45 +26,27 @@ public class URLQueue {
 	 */
 	public boolean add( URL url ) {
 
-		String normalizedURL = normalize( url );
-		try {
-			url = new URL( normalizedURL );
-		}
-		catch ( MalformedURLException e ) {
-			return false;
-		}
-		if ( urls.size() < SIZE ) {
-			if ( map.containsKey( normalizedURL ) ) {
+		url = normalize( url );
+		String urlString = url.toString();
+		if ( canAddMoreURLs() ) {
+			if ( urlsSeen.contains( urlString ) ) {
 				return true;
 			}
 			else {
-				Driver.log.trace( "put: " + normalizedURL );
-				map.put( normalizedURL, url );
-				urls.add( url );
+				urlsSeen.add( urlString );
+				queue.add( url );
 				return true;
 			}
 		}
 		return false;
 	}
 
-	/**
-	 * special add is the same as an add except if the url has already been in
-	 * the index it returns false
-	 * 
-	 * @param u
-	 * @return false if a failed add or if url is in list
-	 */
-	public boolean specialAdd( URL u ) {
+	public boolean specialAdd( URL url ) {
 
-		if ( map.containsKey( normalize( u ) ) ) {
-
+		if ( urlsSeen.contains( url.toString() ) ) {
 			return false;
 		}
-		if ( add( u ) == false ) {
-			return false;
-		}
-
-		return true;
+		return add( url );
 	}
 
 	/**
@@ -77,10 +56,7 @@ public class URLQueue {
 	 */
 	public boolean hasNext() {
 
-		if ( SIZE == count || count == urls.size() ) {
-			return false;
-		}
-		return true;
+		return queue.size() > 0;
 	}
 
 	/**
@@ -90,7 +66,7 @@ public class URLQueue {
 	 */
 	public boolean canAddMoreURLs() {
 
-		return urls.size() < SIZE;
+		return urlsSeen.size() < SIZE;
 	}
 
 	/**
@@ -100,23 +76,7 @@ public class URLQueue {
 	 */
 	public URL popQueue() {
 
-		if ( canProccessMoreURLs() ) {
-			count++;
-			// System.out.println( "pop(" + ( count - 1 ) + "): " + normalize(
-			// urls.get( count - 1 ) ) );
-			return urls.get( count - 1 );
-		}
-		return null;
-	}
-
-	/**
-	 * clears out the urlqueue to reset it
-	 */
-	public void clear() {
-
-		urls.clear();
-		map.clear();
-		count = 0;
+		return queue.remove();
 	}
 
 	/**
@@ -125,9 +85,14 @@ public class URLQueue {
 	 * @param url
 	 * @return
 	 */
-	private String normalize( URL url ) {
+	public static URL normalize( URL url ) {
 
-		return url.getProtocol() + "://" + url.getHost() + url.getFile();
+		try {
+			return new URL( url.getProtocol(), url.getHost(), url.getFile() );
+		}
+		catch ( MalformedURLException e ) {
+			return null;
+		}
 	}
 
 	/**
@@ -136,24 +101,14 @@ public class URLQueue {
 	 * @param url
 	 * @return
 	 */
-	public URL resolveAgainst( String url ) {
+	public static URL resolveAgainst( URL base, String url ) {
 
 		try {
-			return urls.get( count - 1 ).toURI().resolve( url ).toURL();
+			return base.toURI().resolve( url ).toURL();
 		}
 		catch ( MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
 			return null;
 		}
-	}
-
-	/**
-	 * returns whether or not the queue is full
-	 * 
-	 * @return
-	 */
-	public boolean canProccessMoreURLs() {
-
-		return count != SIZE;
 	}
 
 }
