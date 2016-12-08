@@ -1,8 +1,10 @@
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -28,11 +30,12 @@ public class URLQueue {
 
 		url = normalize( url );
 		String urlString = url.toString();
-		if ( canAddMoreURLs() ) {
+		if ( urlsSeen.size() < SIZE ) {
 			if ( urlsSeen.contains( urlString ) ) {
 				return true;
 			}
 			else {
+				Driver.log.info( url.toString() );
 				urlsSeen.add( urlString );
 				queue.add( url );
 				return true;
@@ -41,7 +44,20 @@ public class URLQueue {
 		return false;
 	}
 
-	public boolean specialAdd( URL url ) {
+	public List<URL> addAll( List<URL> urls ) {
+
+		List<URL> list = new ArrayList<>();
+		for ( URL url : urls ) {
+
+			if ( specialAdd( url ) ) {
+				list.add( url );
+			}
+
+		}
+		return list;
+	}
+
+	private boolean specialAdd( URL url ) {
 
 		if ( urlsSeen.contains( url.toString() ) ) {
 			return false;

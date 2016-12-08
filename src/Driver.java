@@ -55,23 +55,31 @@ public class Driver {
 			}
 		}
 		if ( parser.hasValue( UrlFlag ) ) {
+
 			String url = parser.getValue( UrlFlag );
 			log.info( url );
-			URL l = null;
+
+			URL seed = null;
 			try {
-				l = new URL( url );
+				seed = new URL( url );
 			}
 			catch ( MalformedURLException e ) {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
+			WebCrawler crawler = new WebCrawler( seed, index );
+
 			if ( parser.hasFlag( MULTI ) ) {
-				HTMLDownloader.parseIntoIndexMultiThread( l, index, parser.getValue( MULTI, 5 ) );
+
+				crawler.crawlMultiThreaded( parser.getValue( MULTI, 5 ) );
+
 			}
 			else {
-				WebCrawler crawler = new WebCrawler( l, index );
+
 				crawler.crawl();
+
 			}
+
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {
