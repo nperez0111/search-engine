@@ -55,8 +55,8 @@ public class Driver {
 				return;
 			}
 
-			WebCrawler crawler = new WebCrawler( l, index );
-			crawler.crawl();
+			WebCrawler crawler = new WebCrawler( index );
+			crawler.crawl( l );
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {
