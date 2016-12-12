@@ -75,4 +75,5 @@ public class MultiThreadedWebCrawler extends WebCrawler {
 		minions.shutdown();
 		log.info( "minions finish" );
 	}
+
 }
