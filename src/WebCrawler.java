@@ -96,6 +96,8 @@ public class WebCrawler {
 	 */
 	public boolean add( URL url ) {
 
+		log.info( "seen:" + urlsSeen.size() );
+		log.info( "queue:" + queue.size() );
 		url = normalize( url );
 		String urlString = url.toString();
 		if ( canAddMoreURLs() ) {

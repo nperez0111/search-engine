@@ -9,11 +9,40 @@ public class MultiThreadedWebCrawler extends WebCrawler {
 	private static final Logger log = Driver.log;
 	private final ThreadSafeInvertedIndex index;
 	private final int threads;
+	ReadWriteLock lock;
 
 	public MultiThreadedWebCrawler( ThreadSafeInvertedIndex index, int threads ) {
 		super( index );
 		this.index = index;
 		this.threads = threads;
+		lock = new ReadWriteLock();
+	}
+
+	@Override
+	public boolean add( URL url ) {
+
+		lock.lockReadWrite();
+		boolean success = super.add( url );
+		lock.unlockReadWrite();
+		return success;
+	}
+
+	@Override
+	public boolean hasNext() {
+
+		lock.lockReadWrite();
+		boolean success = super.hasNext();
+		lock.unlockReadWrite();
+		return success;
+	}
+
+	@Override
+	public URL popQueue() {
+
+		lock.lockReadWrite();
+		URL popped = super.popQueue();
+		lock.unlockReadWrite();
+		return popped;
 	}
 
 	private class PageTask implements Runnable {
@@ -70,7 +99,8 @@ public class MultiThreadedWebCrawler extends WebCrawler {
 		WorkQueue minions = new WorkQueue( threads );
 		log.info( "Seed:" + seed.toString() );
 		log.info( "minions starting" );
-		minions.execute( new PageTask( seed, index, minions ) );
+		add( seed );
+		minions.execute( new PageTask( popQueue(), index, minions ) );
 		minions.finish();
 		minions.shutdown();
 		log.info( "minions finish" );
