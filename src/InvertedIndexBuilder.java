@@ -81,6 +81,35 @@ public class InvertedIndexBuilder {
 	 * @param index
 	 * @throws IOException
 	 */
+	public static InvertedIndex buildMultiThreaded( Path inputPath, ThreadSafeInvertedIndex index, int threads )
+			throws IOException {
+
+		List<Path> files = DirectoryTraverser.validFiles( inputPath );
+
+		WorkQueue minions = new WorkQueue( threads );
+
+		for ( Path file : files ) {
+
+			minions.execute( new ParserTask( file, index ) );
+
+		}
+
+		minions.finish();
+		minions.shutdown();
+		return index;
+
+	}
+
+	/**
+	 * This goes through all the files from the input path and adds all the
+	 * necessary data to the InvertedIndex. Then Prints the InvertedIndex when
+	 * finished adding all the necessary data.
+	 *
+	 * @param inputPath
+	 * @param outputFile
+	 * @param index
+	 * @throws IOException
+	 */
 	public static InvertedIndex build( Path inputPath, InvertedIndex index ) throws IOException {
 
 		List<Path> files = DirectoryTraverser.validFiles( inputPath );
@@ -89,6 +118,31 @@ public class InvertedIndexBuilder {
 			parseInput( file, index );
 		}
 		return index;
+
+	}
+
+	private static class ParserTask implements Runnable {
+
+		private final Path file;
+		private final ThreadSafeInvertedIndex index;
+
+		public ParserTask( Path file, ThreadSafeInvertedIndex index ) {
+			this.file = file;
+			this.index = index;
+		}
+
+		@Override
+		public void run() {
+
+			// InvertedIndex index = new InvertedIndex();
+			try {
+				parseInput( file, index );
+			}
+			catch ( IOException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 

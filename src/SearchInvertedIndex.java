@@ -17,7 +17,7 @@ import java.util.TreeMap;
 public class SearchInvertedIndex {
 
 	private final TreeMap<String, List<Result>> results;
-	private final InvertedIndex index;
+	private final ThreadSafeInvertedIndex index;
 
 	/**
 	 * Searches an invertedindex provided to then output the result in a proper
@@ -25,14 +25,13 @@ public class SearchInvertedIndex {
 	 * 
 	 * @param index
 	 */
-	public SearchInvertedIndex( InvertedIndex index ) {
+	public SearchInvertedIndex( ThreadSafeInvertedIndex index ) {
 		this.index = index;
 		results = new TreeMap<>();
 	}
 
 	/**
-	 * Performs a partial search into an inverted index provided, returns same
-	 * inverted index back
+	 * Performs a partial search into an inverted index provided
 	 * 
 	 * @param inputFile
 	 * @param outputFile
@@ -47,8 +46,7 @@ public class SearchInvertedIndex {
 	}
 
 	/**
-	 * Performs an exact search into an invertedindex provided, returns same
-	 * inverted index back
+	 * Performs an exact search into an invertedindex provided
 	 * 
 	 * @param inputFile
 	 * @param outputFile
@@ -60,6 +58,32 @@ public class SearchInvertedIndex {
 
 		search( inputFile, false );
 
+	}
+
+	/**
+	 * performs a exact search using the inputfile as the source of all the
+	 * queries in a multithreaded manner
+	 * 
+	 * @param inputFile
+	 * @param threads
+	 * @throws IOException
+	 */
+	public void exactMultiThreaded( Path inputFile, int threads ) throws IOException {
+
+		multiSearch( inputFile, false, threads );
+	}
+
+	/**
+	 * performs a partial search using the inputfile as the source of all the
+	 * queries in a multithreaded manner
+	 * 
+	 * @param inputFile
+	 * @param threads
+	 * @throws IOException
+	 */
+	public void partialMultiThreaded( Path inputFile, int threads ) throws IOException {
+
+		multiSearch( inputFile, true, threads );
 	}
 
 	/**
@@ -83,6 +107,45 @@ public class SearchInvertedIndex {
 				List<Result> result = index.search( words, partial );
 				results.put( String.join( " ", words ), result );
 			}
+		}
+
+	}
+
+	private static class SearcherTask implements Runnable {
+
+		private final String[] words;
+		private final ThreadSafeInvertedIndex index;
+		private final boolean partial;
+		private final TreeMap<String, List<Result>> results;
+
+		public SearcherTask( String words, ThreadSafeInvertedIndex index, boolean partial,
+				TreeMap<String, List<Result>> results ) {
+			this.words = StringCleaner.cleanAndSort( words );
+			this.index = index;
+			this.partial = partial;
+			this.results = results;
+		}
+
+		@Override
+		public void run() {
+
+			results.put( String.join( " ", words ), index.search( words, partial ) );
+		}
+
+	}
+
+	private void multiSearch( Path inputFile, boolean partial, int threads ) throws IOException {
+
+		WorkQueue minions = new WorkQueue( threads );
+		try ( BufferedReader reader = Files.newBufferedReader( inputFile, Charset.forName( "UTF8" ) ); ) {
+			String line = null;
+			while ( ( line = reader.readLine() ) != null ) {
+
+				minions.execute( new SearcherTask( line, index, partial, results ) );
+
+			}
+			minions.finish();
+			minions.shutdown();
 		}
 
 	}

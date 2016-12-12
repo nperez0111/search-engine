@@ -5,6 +5,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * This is the driver class that calls all the other classes to build the
  * inverted index and output it into file as well as search it
@@ -20,6 +23,8 @@ public class Driver {
 	private final static String RESULTS = "-results";
 	private final static String EXACT = "-exact";
 	private final static String UrlFlag = "-url";
+	private final static String MULTI = "-multi";
+	protected static Logger log = LogManager.getLogger();
 
 	/**
 	 * First method to be called parses arguments and calls the correct methods
@@ -30,14 +35,19 @@ public class Driver {
 	public static void main( String[] args ) {
 
 		ArgumentParser parser = new ArgumentParser( args );
-		InvertedIndex index = new InvertedIndex();
+		ThreadSafeInvertedIndex index = new ThreadSafeInvertedIndex();
 		SearchInvertedIndex search = new SearchInvertedIndex( index );
 
 		if ( parser.hasValue( DIR ) ) {
 			Path inputIndex = getValidDirectory( parser.getValue( DIR ) );
 			if ( inputIndex != null ) {
 				try {
-					InvertedIndexBuilder.build( inputIndex, index );
+					if ( parser.hasValue( MULTI ) ) {
+						InvertedIndexBuilder.buildMultiThreaded( inputIndex, index, parser.getValue( MULTI, 5 ) );
+					}
+					else {
+						InvertedIndexBuilder.build( inputIndex, index );
+					}
 				}
 				catch ( IOException e ) {
 					System.out.println( "Directory " + inputIndex.toString() + ", Not Found or Non-Existant" );
@@ -46,18 +56,31 @@ public class Driver {
 		}
 
 		if ( parser.hasValue( UrlFlag ) ) {
+
 			String url = parser.getValue( UrlFlag );
-			URL l = null;
+			log.info( url );
+
+			URL seed = null;
 			try {
-				l = new URL( url );
+				seed = new URL( url );
 			}
 			catch ( MalformedURLException e ) {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
+			WebCrawler crawler;
 
-			WebCrawler crawler = new WebCrawler( index );
-			crawler.crawl( l );
+			if ( parser.hasFlag( MULTI ) ) {
+				crawler = new MultiThreadedWebCrawler( index, parser.getValue( MULTI, 5 ) );
+				crawler.crawl( seed );
+
+			}
+			else {
+				crawler = new WebCrawler( index );
+				crawler.crawl( seed );
+
+			}
+
 		}
 
 		if ( parser.hasFlag( INDEX ) ) {
@@ -81,14 +104,19 @@ public class Driver {
 			Path queryFile = parser.getPath( EXACT );
 
 			if ( queryFile == null ) {
-				System.out.println( "Query file is not an actual path." );
+				log.error( "Query file is not an actual path." );
 				return;
 			}
 			try {
-				search.exact( queryFile );
+				if ( parser.hasFlag( MULTI ) ) {
+					search.exactMultiThreaded( queryFile, parser.getValue( MULTI, 5 ) );
+				}
+				else {
+					search.exact( queryFile );
+				}
 			}
 			catch ( IOException e ) {
-				System.out.println( "Exact Searching Inverted Index Failed" );
+				log.error( "Exact Searching Inverted Index Failed" );
 			}
 		}
 
@@ -100,7 +128,12 @@ public class Driver {
 				return;
 			}
 			try {
-				search.partial( queryFile );
+				if ( parser.hasFlag( MULTI ) ) {
+					search.partialMultiThreaded( queryFile, parser.getValue( MULTI, 5 ) );
+				}
+				else {
+					search.partial( queryFile );
+				}
 			}
 			catch ( IOException e ) {
 				System.out.println( "Partial Searching Inverted Index Failed" );

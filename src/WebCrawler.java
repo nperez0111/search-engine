@@ -1,19 +1,24 @@
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import org.apache.logging.log4j.Logger;
+
 public class WebCrawler {
 
-	private final InvertedIndex index;
+	private final ThreadSafeInvertedIndex index;
 	private final Queue<URL> queue;
 	private final Set<String> urlsSeen;
 	public static final int SIZE = 50;
+	private static final Logger log = Driver.log;
 
-	public WebCrawler( InvertedIndex index ) {
+	public WebCrawler( ThreadSafeInvertedIndex index ) {
 		this.index = index;
 		queue = new LinkedList<>();
 		urlsSeen = new HashSet<>();
@@ -68,6 +73,19 @@ public class WebCrawler {
 
 	}
 
+	public List<URL> addAll( List<URL> urls ) {
+
+		List<URL> list = new ArrayList<>();
+		for ( URL url : urls ) {
+			if ( !urlsSeen.contains( url.toString() ) ) {
+				if ( add( url ) ) {
+					list.add( url );
+				}
+			}
+
+		}
+		return list;
+	}
 	/**
 	 * adds a url queue to the queue
 	 * 
@@ -76,7 +94,6 @@ public class WebCrawler {
 	 *         to the queue
 	 */
 	public boolean add( URL url ) {
-
 		url = normalize( url );
 		String urlString = url.toString();
 		if ( canAddMoreURLs() ) {
@@ -153,4 +170,5 @@ public class WebCrawler {
 			return null;
 		}
 	}
+  
 }
