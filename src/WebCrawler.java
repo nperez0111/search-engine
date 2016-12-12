@@ -10,6 +10,13 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Webcrawler is meant to be given an invertedindex to parse a bunch of urls
+ * collected from the seed url into the inverted index
+ * 
+ * @author nickthesick
+ *
+ */
 public class WebCrawler {
 
 	private final ThreadSafeInvertedIndex index;
@@ -96,8 +103,6 @@ public class WebCrawler {
 	 */
 	public boolean add( URL url ) {
 
-		log.info( "seen:" + urlsSeen.size() );
-		log.info( "queue:" + queue.size() );
 		url = normalize( url );
 		String urlString = url.toString();
 		if ( canAddMoreURLs() ) {

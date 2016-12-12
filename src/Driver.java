@@ -50,7 +50,7 @@ public class Driver {
 					}
 				}
 				catch ( IOException e ) {
-					System.out.println( "Directory " + inputIndex.toString() + ", Not Found or Non-Existant" );
+					log.error( "Directory " + inputIndex.toString() + ", Not Found or Non-Existant" );
 				}
 			}
 		}
@@ -64,7 +64,7 @@ public class Driver {
 				seed = new URL( url );
 			}
 			catch ( MalformedURLException e ) {
-				System.out.println( "Invalid URL Passed" );
+				log.error( "Invalid URL Seed Passed" );
 				return;
 			}
 			WebCrawler crawler;
@@ -86,14 +86,14 @@ public class Driver {
 			Path outputIndex = parser.getPath( INDEX, "index.json" );
 
 			if ( outputIndex == null ) {
-				System.out.println( "outputfile is not available" );
+				log.error( "outputfile is not available" );
 			}
 			else {
 				try {
 					index.toJSON( outputIndex );
 				}
 				catch ( IOException e ) {
-					System.out.println( "Outputting index to: " + outputIndex.toString() + " failed" );
+					log.error( "Outputting index to: " + outputIndex.toString() + " failed" );
 				}
 
 			}
@@ -123,7 +123,7 @@ public class Driver {
 			Path queryFile = parser.getPath( QUERY );
 
 			if ( queryFile == null ) {
-				System.out.println( "Query file is not an actual path." );
+				log.error( "Query file is not an actual path." );
 				return;
 			}
 			try {
@@ -135,7 +135,7 @@ public class Driver {
 				}
 			}
 			catch ( IOException e ) {
-				System.out.println( "Partial Searching Inverted Index Failed" );
+				log.error( "Partial Searching Inverted Index Failed" );
 			}
 		}
 
@@ -143,7 +143,7 @@ public class Driver {
 
 			Path outputResult = parser.getPath( RESULTS, "results.json" );
 			if ( outputResult == null ) {
-				System.out.println( "output file does not exist." );
+				log.error( "output file does not exist." );
 				return;
 			}
 			search.outputResults( outputResult );
@@ -162,7 +162,7 @@ public class Driver {
 
 		Path dir = Paths.get( path );
 		if ( dir == null ) {
-			System.out.println( "The Directory: " + path + " you specified does not exist..." );
+			log.error( "The Directory: " + path + " you specified does not exist..." );
 			return null;
 		}
 		return dir.normalize();

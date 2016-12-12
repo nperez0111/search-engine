@@ -45,6 +45,13 @@ public class MultiThreadedWebCrawler extends WebCrawler {
 		return popped;
 	}
 
+	/**
+	 * this class holds all the appropriate info to parse a page into an
+	 * inverted index
+	 * 
+	 * @author nickthesick
+	 *
+	 */
 	private class PageTask implements Runnable {
 
 		private final URL seed;
@@ -93,6 +100,10 @@ public class MultiThreadedWebCrawler extends WebCrawler {
 
 	}
 
+	/**
+	 * This crawl parses the seed which will then start doing a webcrawl to
+	 * other pages parsing them in as well.
+	 */
 	@Override
 	public void crawl( URL seed ) {
 
