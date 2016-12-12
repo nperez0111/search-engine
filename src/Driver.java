@@ -54,6 +54,7 @@ public class Driver {
 				}
 			}
 		}
+
 		if ( parser.hasValue( UrlFlag ) ) {
 
 			String url = parser.getValue( UrlFlag );

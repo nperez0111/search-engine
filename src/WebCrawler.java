@@ -86,7 +86,6 @@ public class WebCrawler {
 		}
 		return list;
 	}
-
 	/**
 	 * adds a url queue to the queue
 	 * 
@@ -95,9 +94,6 @@ public class WebCrawler {
 	 *         to the queue
 	 */
 	public boolean add( URL url ) {
-
-		log.info( "seen:" + urlsSeen.size() );
-		log.info( "queue:" + queue.size() );
 		url = normalize( url );
 		String urlString = url.toString();
 		if ( canAddMoreURLs() ) {
@@ -174,5 +170,5 @@ public class WebCrawler {
 			return null;
 		}
 	}
-
+  
 }
