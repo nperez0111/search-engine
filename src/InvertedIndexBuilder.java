@@ -121,6 +121,13 @@ public class InvertedIndexBuilder {
 
 	}
 
+	/**
+	 * Class that holds all the neccessary info to parse a directory into an
+	 * inverted index
+	 * 
+	 * @author nickthesick
+	 *
+	 */
 	private static class ParserTask implements Runnable {
 
 		private final Path file;
@@ -139,8 +146,7 @@ public class InvertedIndexBuilder {
 				parseInput( file, index );
 			}
 			catch ( IOException e ) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Driver.log.error( "unable to parse file:" + file.toString() );
 			}
 		}
 

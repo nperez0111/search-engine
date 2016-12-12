@@ -187,7 +187,7 @@ public class SearchInvertedIndex {
 			writer.write( "}\n" );
 		}
 		catch ( IOException e ) {
-			System.out.println( "Error outputing results to File." );
+			Driver.log.error( "Error outputing results to File." );
 		}
 
 	}
