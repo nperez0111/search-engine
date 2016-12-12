@@ -67,16 +67,16 @@ public class Driver {
 				System.out.println( "Invalid URL Passed" );
 				return;
 			}
-			WebCrawler crawler = new WebCrawler( seed, index );
+			WebCrawler crawler;
 
 			if ( parser.hasFlag( MULTI ) ) {
-
-				crawler.crawlMultiThreaded( parser.getValue( MULTI, 5 ) );
+				crawler = new MultiThreadedWebCrawler( index, parser.getValue( MULTI, 5 ) );
+				crawler.crawl( seed );
 
 			}
 			else {
-
-				crawler.crawl();
+				crawler = new WebCrawler( index );
+				crawler.crawl( seed );
 
 			}
 

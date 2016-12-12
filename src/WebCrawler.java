@@ -1,27 +1,38 @@
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
 public class WebCrawler {
 
 	private final ThreadSafeInvertedIndex index;
-	private final ThreadSafeURLQueue queue;
+	private final Queue<URL> queue;
+	private final Set<String> urlsSeen;
+	public static final int SIZE = 50;
+	private static final Logger log = Driver.log;
 
-	public WebCrawler( URL seed, ThreadSafeInvertedIndex index ) {
+	public WebCrawler( ThreadSafeInvertedIndex index ) {
 		this.index = index;
-		queue = new ThreadSafeURLQueue();
-		queue.add( seed );
+		queue = new LinkedList<>();
+		urlsSeen = new HashSet<>();
 	}
 
 	/*
 	 * starts the proccess to begin the crawl
 	 */
-	public void crawl() {
+	public void crawl( URL seed ) {
+
+		add( seed );
 
 		do {
-			URL popped = queue.popQueue();
+			URL popped = popQueue();
 			if ( popped != null ) {
 				parseIntoIndex( popped );
 			}
@@ -30,7 +41,7 @@ public class WebCrawler {
 				break;
 			}
 		}
-		while ( queue.hasNext() );
+		while ( hasNext() );
 	}
 
 	/**
@@ -46,14 +57,14 @@ public class WebCrawler {
 		String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 		InvertedIndexBuilder.parseLine( words, base.toString(), 1, index );
 
-		if ( queue.canAddMoreURLs() ) {
+		if ( canAddMoreURLs() ) {
 			// Goes through all possible urls and if urlqueue is full we stop
 			// trying to add
 
 			for ( String link : LinkParser.listLinks( html ) ) {
-				URL url = URLQueue.resolveAgainst( base, link );
+				URL url = resolveAgainst( base, link );
 				if ( url != null ) {
-					if ( queue.add( url ) == false ) {
+					if ( add( url ) == false ) {
 						return;
 					}
 				}
@@ -62,20 +73,116 @@ public class WebCrawler {
 
 	}
 
-	private static final Logger log = Driver.log;
+	public List<URL> addAll( List<URL> urls ) {
+
+		List<URL> list = new ArrayList<>();
+		for ( URL url : urls ) {
+			if ( !urlsSeen.contains( url.toString() ) ) {
+				if ( add( url ) ) {
+					list.add( url );
+				}
+			}
+
+		}
+		return list;
+	}
+
+	/**
+	 * adds a url queue to the queue
+	 * 
+	 * @param url
+	 * @return false if queue is full true if the url is in the queue or added
+	 *         to the queue
+	 */
+	public boolean add( URL url ) {
+
+		url = normalize( url );
+		String urlString = url.toString();
+		if ( canAddMoreURLs() ) {
+			if ( urlsSeen.contains( urlString ) ) {
+				return true;
+			}
+			else {
+				urlsSeen.add( urlString );
+				queue.add( url );
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether or not there are more urls to process
+	 * 
+	 * @return boolean
+	 */
+	public boolean hasNext() {
+
+		return queue.size() > 0;
+	}
+
+	/**
+	 * returns true if the urlqueue can add more urls
+	 * 
+	 * @return boolean
+	 */
+	public boolean canAddMoreURLs() {
+
+		return urlsSeen.size() < SIZE;
+	}
+
+	/**
+	 * returns the first element in the queue
+	 * 
+	 * @return url to parse
+	 */
+	public URL popQueue() {
+
+		return queue.remove();
+	}
+
+	/**
+	 * normalizes a URL to a consistent string representation
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static URL normalize( URL url ) {
+
+		try {
+			return new URL( url.getProtocol(), url.getHost(), url.getFile() );
+		}
+		catch ( MalformedURLException e ) {
+			return null;
+		}
+	}
+
+	/**
+	 * Resolves a URL against the current URL ( Assumed to be the seed URL )
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static URL resolveAgainst( URL base, String url ) {
+
+		try {
+			return base.toURI().resolve( url ).toURL();
+		}
+		catch ( MalformedURLException | URISyntaxException | IllegalArgumentException e ) {
+			return null;
+		}
+	}
 
 	private class PageTask implements Runnable {
 
 		private final URL seed;
 		private final ThreadSafeInvertedIndex index;
 		private final WorkQueue workers;
-		private ThreadSafeURLQueue queue;
 
-		public PageTask( URL seed, ThreadSafeInvertedIndex index, WorkQueue workers, ThreadSafeURLQueue queue ) {
+		public PageTask( URL seed, ThreadSafeInvertedIndex index, WorkQueue workers ) {
 			this.seed = seed;
 			this.index = index;
 			this.workers = workers;
-			this.queue = queue;
 			log.info( "Seed:" + seed.toString() );
 
 		}
@@ -87,11 +194,11 @@ public class WebCrawler {
 			String[] words = HTMLCleaner.parseWords( HTMLCleaner.cleanHTML( html ) );
 			InvertedIndexBuilder.parseLine( words, seed.toString(), 1, index );
 
-			if ( queue.canAddMoreURLs() ) {
+			if ( canAddMoreURLs() ) {
 
 				List<URL> urls = new ArrayList<>();
 				for ( String link : LinkParser.listLinks( html ) ) {
-					URL url = URLQueue.normalize( URLQueue.resolveAgainst( seed, link ) );
+					URL url = normalize( resolveAgainst( seed, link ) );
 
 					if ( url != null ) {
 
@@ -101,10 +208,10 @@ public class WebCrawler {
 
 				}
 				log.info( urls.toString() );
-				for ( URL url : queue.addAll( urls ) ) {
+				for ( URL url : addAll( urls ) ) {
 
 					log.info( "Added:" + url.toString() );
-					workers.execute( new PageTask( url, index, workers, queue ) );
+					workers.execute( new PageTask( url, index, workers ) );
 
 				}
 
@@ -114,16 +221,14 @@ public class WebCrawler {
 
 	}
 
-	public void crawlMultiThreaded( int threads ) {
+	public void crawlMultiThreaded( URL seed, int threads ) {
 
 		WorkQueue minions = new WorkQueue( threads );
-		URL seed = queue.popQueue();
 		log.info( "Seed:" + seed.toString() );
 		log.info( "minions starting" );
-		minions.execute( new PageTask( seed, index, minions, queue ) );
+		minions.execute( new PageTask( seed, index, minions ) );
 		minions.finish();
 		minions.shutdown();
 		log.info( "minions finish" );
 	}
-
 }
