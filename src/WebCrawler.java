@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import org.apache.logging.log4j.Logger;
-
 /**
  * Webcrawler is meant to be given an invertedindex to parse a bunch of urls
  * collected from the seed url into the inverted index
@@ -23,7 +21,6 @@ public class WebCrawler {
 	private final Queue<URL> queue;
 	private final Set<String> urlsSeen;
 	public static final int SIZE = 50;
-	private static final Logger log = Driver.log;
 
 	public WebCrawler( ThreadSafeInvertedIndex index ) {
 		this.index = index;
@@ -44,7 +41,7 @@ public class WebCrawler {
 				parseIntoIndex( popped );
 			}
 			else {
-				System.out.println( "ran out of elements to proccess" );
+				Driver.log.error( "ran out of elements to proccess" );
 				break;
 			}
 		}
