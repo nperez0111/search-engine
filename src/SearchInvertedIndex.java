@@ -128,8 +128,24 @@ public class SearchInvertedIndex {
 
 		@Override
 		public void run() {
-
+			// TODO Must be protected for multithreaded version
 			results.put( String.join( " ", words ), index.search( words, partial ) );
+			
+			/* TODO
+			this is the bad version
+			synchronized (results) {
+				results.put( String.join( " ", words ), index.search( words, partial ) );
+			}
+			
+			this is the good version
+			String line = String.join( " ", words );
+			List<Result> local = index.search( words, partial ); 
+			synchronized (results) {
+				results.put( line,  local);
+			}
+			*/			
+			
+			
 		}
 
 	}

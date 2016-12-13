@@ -1,5 +1,7 @@
 import java.util.LinkedList;
 
+// TODO Better to sychronize pending on a different lock object
+
 /**
  * A simple work queue implementation based on the IBM developerWorks article by
  * Brian Goetz. It is up to the user of this class to keep track of whether
@@ -35,7 +37,7 @@ public class WorkQueue {
 	 */
 	public WorkQueue() {
 		this( DEFAULT );
-		pending = 0;
+		pending = 0; // TODO Remove
 	}
 
 	/**
@@ -70,7 +72,7 @@ public class WorkQueue {
 	public void execute( Runnable r ) {
 
 		synchronized ( queue ) {
-			incrementPending();
+			incrementPending(); // TODO If synchronize pending on something else, pull this out
 			queue.addLast( r );
 			queue.notifyAll();
 		}

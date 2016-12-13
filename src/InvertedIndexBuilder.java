@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+// TODO Create new classes for multi-threading
+
 /**
  * Builds the inverted index based off a file
  * 
@@ -13,6 +15,7 @@ import java.util.List;
  */
 public class InvertedIndexBuilder {
 
+	// TODO Make public
 	/**
 	 * Take a file and put all the words into an index into the index
 	 *
@@ -141,9 +144,11 @@ public class InvertedIndexBuilder {
 		@Override
 		public void run() {
 
+			// TODO This is the right idea, InvertedIndex local = new InvertedIndex();
 			// InvertedIndex index = new InvertedIndex();
 			try {
 				parseInput( file, index );
+				// TODO index.addAll(local);
 			}
 			catch ( IOException e ) {
 				Driver.log.error( "unable to parse file:" + file.toString() );

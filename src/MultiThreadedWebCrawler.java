@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
+// TODO extends doesn't actually make sense here
+// TODO Better that these classes implement a common interface
+
 public class MultiThreadedWebCrawler extends WebCrawler {
 
 	private static final Logger log = Driver.log;
 	private final ThreadSafeInvertedIndex index;
 	private final int threads;
-	ReadWriteLock lock;
+	ReadWriteLock lock; // TODO keywords!
 
 	public MultiThreadedWebCrawler( ThreadSafeInvertedIndex index, int threads ) {
 		super( index );

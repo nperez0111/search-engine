@@ -3,6 +3,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+// TODO Use try/finally
+// TODO https://github.com/usf-cs212-2016/lectures/blob/master/Advanced%20Multithreading/src/ConcurrentSet.java
+
 public class ThreadSafeInvertedIndex extends InvertedIndex {
 
 	private ReadWriteLock lock;

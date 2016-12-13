@@ -159,6 +159,7 @@ public class InvertedIndex {
 		return results;
 	}
 
+	// TODO Make private, do not @Override in thread-safe version
 	public void searchSomething( String match, String word, Map<String, Result> map, List<Result> results ) {
 
 		for ( String file : index.get( match ).keySet() ) {
@@ -222,5 +223,22 @@ public class InvertedIndex {
 
 		JSONWriter.toJSON( index, output );
 	}
-
+	
+	/* TODO 
+	public void addAll(InvertedIndex other) {
+		// TODO Can't do this because it will replace anything we already have
+		this.index.putAll(other.index);
+		
+		for (String word : other.index.keySet()) {
+			
+			if (this.index.containsKey(word) == false) {
+				this.index.put(word, other.index.get(word));
+			}
+			else {
+				two cases here, call put where possible and addAll elsewhere
+			}
+			
+		}
+	}
+	*/
 }

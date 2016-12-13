@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class WebCrawler {
 
-	private final ThreadSafeInvertedIndex index;
+	private final ThreadSafeInvertedIndex index; // TODO normal index, not a thread safe
 	private final Queue<URL> queue;
 	private final Set<String> urlsSeen;
 	public static final int SIZE = 50;

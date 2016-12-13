@@ -43,9 +43,8 @@ public class ReadWriteLock {
 	 * threads if necessary.
 	 */
 	public synchronized void unlockReadOnly() {
-
 		readers--;
-		notifyAll();
+		notifyAll(); // TODO Only when readers == 0
 	}
 
 	/**
