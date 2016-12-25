@@ -223,22 +223,38 @@ public class InvertedIndex {
 
 		JSONWriter.toJSON( index, output );
 	}
-	
-	/* TODO 
-	public void addAll(InvertedIndex other) {
-		// TODO Can't do this because it will replace anything we already have
-		this.index.putAll(other.index);
-		
-		for (String word : other.index.keySet()) {
-			
-			if (this.index.containsKey(word) == false) {
-				this.index.put(word, other.index.get(word));
+
+	/**
+	 * Adds one inverted Index to another
+	 * 
+	 * @param other
+	 */
+	public void addAll( InvertedIndex other ) {
+
+		for ( String word : other.index.keySet() ) {
+
+			if ( index.containsKey( word ) == false ) {
+
+				index.put( word, other.index.get( word ) );
+
 			}
 			else {
-				two cases here, call put where possible and addAll elsewhere
+
+				for ( String location : other.index.get( word ).keySet() ) {
+
+					if ( index.get( word ).containsKey( location ) == false ) {
+
+						index.get( word ).put( location, other.index.get( word ).get( location ) );
+
+					}
+					else {
+
+						index.get( word ).get( location ).addAll( other.index.get( word ).get( location ) );
+
+					}
+				}
 			}
-			
+
 		}
 	}
-	*/
 }
